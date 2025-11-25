@@ -1,1 +1,1 @@
-Sitemap: https://git add CNAME/sitemap.xml
+Sitemap: https://felixlennert.xyz/sitemap.xml
