@@ -1,0 +1,30 @@
+---
+title: "Academic Research"
+---
+
+What I like about the social sciences is that instead of just building models to predict outcomes, we get to dig into the *why* behind human behavior. Given that we all witness human behavior all the time, everyone has their own little theories of why people do what they do. The challenge of social science research is to move beyond this anecdotal evidence and figure out what actually drives behavior on a larger scale. The crux is then to communicate these insights in a way that is understandable and useful to others. On this page, I share some of the academic research projects that I conducted during my Ph.D.
+
+### Mediated Cues. How Elite Polarization is Transported Through the Media
+*with Väinö Yrjänäinen and Måns Magnusson*
+
+Do people become more polarized because politicians say polarizing things in the news, or do politicians say polarizing things because people are already polarized? We studied 25 years of French newspaper coverage and public opinion surveys to find out. The answer: both happen, but it depends on the issue. For some topics, media coverage of elite politicians clearly drives public opinion. For others, politicians seem to follow where public opinion is already going. This means there's no one-size-fits-all explanation for how political polarization spreads.
+
+### How Elite Negativity Shapes Voter Affect: Evidence from the 2021 German Federal Election
+*solo-authored; currently under review at German Politics*
+
+When a political party attacks its opponents on Twitter, does it make voters dislike those opponents more? Using transformer models and OLS regression, I analyzed tweets from candidates in Germany's 2021 election alongside biweekly voter survey data to find out. The answer is yes: when Party A criticizes Party B on social media, Party A's supporters report disliking Party B more. The effect is strongest among people who already identify strongly with their party, and it holds up regardless of whether the parties might form a coalition together or how ideologically similar they are. Also, the opposite is not true: a party don't criticize other parties more if they know that their supporters don't like these parties.
+
+### Do Liberals Drive Volvos Everywhere? Assessing Cultural Bundles in Sweden
+*with Anastasia Menshikova, Elida Izani Binti Ibrahim, and Miriam Hurtado Bodell; currently under review at Social Media+Society*
+
+In the U.S., we know that political views often cluster with lifestyle choices -- like the stereotype that liberals drive Priuses. But does this happen in countries with more than two major parties? We analyzed what 12,000 politically active Swedish Twitter users follow using mixed membership clustering to see if political affiliation predicts their cultural tastes. It does. Swedish voters' media consumption, cultural interests, religious views, and even sense of humor align with their partisan identity. Political polarization isn't just about policy disagreements -- it's seeping into everyday lifestyle choices, even in a multi-party democracy like Sweden.
+
+### Media Slant as Political Refraction. Measuring Political Media Slant and Polarization in the French Media Landscape
+*with Rubing Shen, Arnault Chatelain, and Etienne Ollion*
+
+How can we measure whether a newspaper leans left or right without relying on subjective judgments? We developed a new method that analyzes how journalists talk about political issues differently than politicians do. By looking at subtle differences in word choice and framing, we can detect political bias at a very fine level, down to individual paragraphs. We tested this on major French newspapers from 2000-2010 and found that mainstream media became increasingly polarized during this period. This gives researchers and the public a tool to track media bias objectively over time.
+
+### Perceptions of Intergenerational Mobility in Germany, Sweden, and the UK: Insights from Machine-Learning Text Analysis
+*with Alexi Gugushvili and Patrick Präg; [preprint](); currently under review at European Journal of Sociology*
+
+When people compare their lives to their parents', what are they actually comparing? We used LLMs and clustering-algorithms to analyze thousands of open-ended survey responses from Germany, Sweden, and the UK. While traditional research focuses on income, education, and job status, we found that people think about much more: home ownership, family life, freedom, lifestyle choices, and opportunities. What matters also varies dramatically by country: Swedes emphasize education, Brits focus on housing, Germans talk about freedom and lifestyle. Gender matters too: women are more likely to mention education and family, while men focus on income and career. Understanding what people actually care about when they think about social mobility gives us a richer picture than traditional metrics alone.

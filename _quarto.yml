@@ -1,0 +1,28 @@
+project:
+  type: website
+
+website:
+  title: "Felix Lennert"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About Me
+      - href: projects.qmd
+        text: Coding Projects
+      - href: research.qmd
+        text: Research Output
+      - href: teaching.qmd
+        text: Teaching Materials
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+
+
