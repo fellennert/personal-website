@@ -1,5 +1,9 @@
 ---
-title: "About"
+title: "Projects"
 ---
 
-About this site
+This section is where theory meets practice. Each project here represents a different slice of what I bring to data work: collecting messy data from the web, building and comparing machine learning models, applying cutting-edge NLP techniques, creating interactive tools to make my partner happy, and making complex methods accessible to others.
+
+Some of these grew out of pure curiosity (what patterns emerge in song lyrics? Can we detect "eras"?), others from practical needs (how do I make my teaching materials easily searchable for my students?), and a few from different research challenges (what is the best classifier for a job? how good are LLMs *actually*? is political polarization really so *hot*?). Together, they show how I approach problems: I start with a question, pick the right tools and data for the job, and don't stop until I've found an answer worth sharing.
+
+You'll see a mix of techniques here: classic machine learning, modern transformer models, web scraping, interactive dashboards, and RAG applications. But the thread that runs through all of them is the same: how can I turn raw data into understandable insights, into something people can actually understand and use.
