@@ -4,7 +4,7 @@ title: "Personal Website"
 
 ![Portrait of Felix](/files/me.jpg){width=800px style="border-radius: 50%;"}
 
-Hi! My name is Felix and this is my personal website. I am a final-year Ph.D. student in Sociology at the Ecole Polytechnique in Paris. I live in Boston with my partner (who is doing her Ph.D. in Sociology, too) and two gorgeous cats. I am a German citizen and have a valid work permit for the US.
+Hi! My name is Felix and this is my personal website. I am a final-year Ph.D. student in Sociology at the Ecole Polytechnique in Paris. I live in Boston with my partner (who is doing her Ph.D. in Sociology, too) and two gorgeous cats. I am a German citizen and have a valid work permit for the U.S.
 
 I spent years doing research in the field of cultural and political sociology, asking big questions about human behavior and waiting even longer for answers. This career gave me great opportunities: I lived in Germany, Sweden, France, and the U.S., I met great and interesting people, and learned a lot. However, between endless research timelines, publishing and revision cycles, and the slow churn of academic life, I also realized that I was craving something different: the chance to see my work make an impact more immediately and directly. Who cares about a ten-page journal article that gets 1,000 downloads and maybe influences a few other researchers if it doesn't change anything in the real world?
 
