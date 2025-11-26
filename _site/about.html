@@ -148,15 +148,9 @@ ul.task-list li input[type="checkbox"] {
 
 <p>I’m Felix, a final-year Ph.D.&nbsp;student in Sociology at the Ecole Polytechnique in Paris, currently living in Boston with my partner and two cats. I’m a German citizen with a valid U.S. work permit.</p>
 <p>I hold a Bachelor’s of Arts degree in Political Science (University of Regensburg), a Master’s of Science from Linköping University, and will defend my Ph.D.&nbsp;in Sociology at the Ecole Polytechnique in Paris in early 2026. During my Ph.D., I also spent a year as a visiting researcher at Duke University.</p>
-<p>You can find my CV below. If you want to get in touch, please reach out via <a href="mailto:felix.lennert@icloud.com">email</a> or <a href="https://www.linkedin.com/in/felix-lennert/">LinkedIn</a>.</p>
-<p>Below you can find my CV (<a href="./files/cv-felix-lennert.pdf">downloadable as PDF</a>):</p>
-<p>```{css echo=FALSE}</p>
-<p>.embed-container { position: relative; padding-bottom: 129%; height: 0; overflow: hidden; max-width: 100%; }</p>
-<p>.embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</p>
-<p>```</p>
-<div class="embed-container">
-<p><iframe src="./files/cv-felix-lennert.pdf" style="border: 0.5px"></iframe></p>
-</div>
+<p>You can find my CV below (you can also <a href="./files/cv-felix-lennert.pdf">download it</a>). If you want to get in touch, please reach out via <a href="mailto:felix.lennert@icloud.com">email</a> or <a href="https://www.linkedin.com/in/felix-lennert/">LinkedIn</a>.</p>
+<iframe src="./files/cv-felix-lennert.pdf" width="100%" height="800px" style="border: 1px solid #ddd;">
+</iframe>
 
 
 
@@ -234,7 +228,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/git add CNAME");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
