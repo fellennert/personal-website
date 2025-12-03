@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>About Me – Felix Lennert</title>
+<title>How The Media Can Shape Ideological Polarization – Felix Lennert</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +23,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5b4ad623e5705c0698d39aec6f10cf02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5b4ad623e5705c0698d39aec6f10cf02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,8 +69,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -80,7 +109,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Felix Lennert</span>
     </a>
   </div>
@@ -91,19 +120,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./about.html" aria-current="page"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./research.html"> 
+    <a class="nav-link" href="../research.html"> 
 <span class="menu-text">Research Output</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./teaching.html"> 
+    <a class="nav-link" href="../teaching.html"> 
 <span class="menu-text">Teaching Materials</span></a>
   </li>  
 </ul>
@@ -117,15 +146,23 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-we-did" id="toc-what-we-did" class="nav-link active" data-scroll-target="#what-we-did">What We Did</a></li>
+  <li><a href="#our-findings" id="toc-our-findings" class="nav-link" data-scroll-target="#our-findings">Our Findings</a></li>
+  <li><a href="#takeaways" id="toc-takeaways" class="nav-link" data-scroll-target="#takeaways">Takeaways</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">About Me</h1>
+<h1 class="title">How The Media Can Shape Ideological Polarization</h1>
 </div>
 
 
@@ -142,13 +179,32 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>I’m Felix, a final-year Ph.D.&nbsp;student in Sociology at the Ecole Polytechnique in Paris, currently living in Boston with my partner and two cats. I’m a German citizen with a valid U.S. work permit.</p>
-<p>I hold a Bachelor’s of Arts degree in Political Science (University of Regensburg), a Master’s of Science from Linköping University, and will defend my Ph.D.&nbsp;in Sociology at the Ecole Polytechnique in Paris in early 2026. During my Ph.D., I also spent a year as a visiting researcher at Duke University.</p>
-<p>You can find my CV below (you can also <a href="./files/cv-felix-lennert.pdf">download it</a>). If you want to get in touch, please reach out via <a href="mailto:felix.lennert@icloud.com">email</a> or <a href="https://www.linkedin.com/in/felix-lennert/">LinkedIn</a>.</p>
-<iframe src="./files/cv-felix-lennert.pdf" width="100%" height="800px" style="border: 1px solid #ddd;">
-</iframe>
+<p>A commonly employed definition of ideological polarization is one of “political alignment” – Republicans despise immigration and love guns, Liberals are united in their views on climate change and social equality. We experience this in our everyday lives in political discussions with peers and when reading the news. In my dissertation research, I was wondering: where do these alignments in public opinion stem from? Especially in Europe, where news coverage tends to be less overtly partisan than in the U.S. Put differently, the question this project aimed to answer is: how do people learn “which views go together”?</p>
+<p>To answer this question, my collaborators (two statistics scholars from Sweden) and I decided that we should take a step back and ask ourselves: where can people learn about these alignments? How can we measure and model this alignment process? And, finally, how can we determine whether this process has actually taken place?</p>
+<p>The response we came up with was that people learn about this from the news and through discussions with peers. We cannot observe peer discussions, but we can try to quantify what folks pick up from the news by measuring the associations between parties/politicians and issues. Furthermore, we can use longitudinal survey data to document that views have actually aligned with political positioning on certain things.</p>
+<p>Extant research has highlighted two roles for the media. On the one hand, the media do tell people what politicians and parties think about certain issues. Hence, people can learn which views are acceptable given you have a certain political identity. On the other hand, the media also reflect opinion divisions in the public. Thus, the final research question we aimed to answer is: does media coverage drive political polarization, or does it merely reflect divisions that already exist?</p>
+<p>The short answer after analyzing 25 years of French data is that is not really an “either/or” but actually a “both, but with some nuance.”</p>
+<section id="what-we-did" class="level2">
+<h2 class="anchored" data-anchor-id="what-we-did">What We Did</h2>
+<p>We identified and tracked ideological alignment for 18 political issues from 1980-2005 in French survey data. Furthermore, we used Probabilistic Word Embeddings to track the associations of those issues with political elites and parties in more than 1 million newspaper articles from Le Monde. Thus, we tracked both public opinion alignment and media coverage patterns.</p>
+<p>Finally, we employed a set of Mixed-Effects models to uncover which pathway (media <span class="math inline">\(\rightarrow\)</span> public opinion or public opinion <span class="math inline">\(\rightarrow\)</span> media) dominates and what could drive this.</p>
+</section>
+<section id="our-findings" class="level2">
+<h2 class="anchored" data-anchor-id="our-findings">Our Findings</h2>
+<p><strong>The feedback loop is real and roughly balanced.</strong> Media coverage linking issues to partisan politicians increases public polarization by about the same magnitude that existing public divisions drive media to cover issues as political conflicts. The effects are equal, and neither really dominates.</p>
+<p><strong>It’s about ambient exposure, not breaking news.</strong> Media influence works through accumulated coverage over months and years, not immediate reaction to recent headlines. Partisan associations form gradually, almost subconsciously, through sustained exposure. That experimental research showing immediate opinion shifts? It captures something real but misses how opinion structures that actually crystallize in the real world.</p>
+<p><strong>The inverted-U pattern nobody predicted.</strong> We find that people with moderate education levels (elementary through high school) show responses to media framing 3-4 times stronger than either the least or most educated. This is probably as the least educated aren’t sufficiently exposed to or processing political coverage. The highly educated have frameworks for critical evaluation. But that middle? They’re encountering partisan signals regularly while lacking sophisticated filters. This is your persuadable middle – and it’s larger than you think.</p>
+<p><strong>Issue maturity is everything.</strong> Whether an issue already has strong partisan associations fundamentally determines the dynamic. I watched emerging issues with low baseline polarization show strong top-down media effects. Established partisan issues showed the reverse: media followed public opinion more than it shaped it.</p>
+</section>
+<section id="takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="takeaways">Takeaways</h2>
+<p>My biggest takeaway from this research isn’t a finding but rather the conviction that reality is almost always more complex than our first-order theories predict, and that our measurement should reflect that. When I started this project, I was convinced that its a one-way street: media shapes opinion. However, reading more on existing results and explicitly testing for them in the analyses revealed more nuance.</p>
+<p>Furthermore, existing work often assumes that education makes people more attentive to the news and, thus, predicts more political sophistication and better alignment. While the latter finding is true according to my data, the susceptibility for change is a more nuanced story.</p>
+<p>Finally, not all issues “behaved” the same way – an effect found in one case is not the same in another. This means that there is tremendous value in comparing a broad set of cases and coming up with a theoretical justification that actually explains how this variation comes about to make better predictions.</p>
+<p>For industry applications, this means that measurement systems need to be desinged in such a way that they can detect bidirectional relationships, heterogeneous effects, non-linear patterns, and dynamics that vary by context. Yes, this is harder than running a simple regression or A/B test, but if you’re making strategic decisions about content, products, or campaigns worth millions of dollars, shouldn’t your measurement be as sophisticated as your operations?</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
