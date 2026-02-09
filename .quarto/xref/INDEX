@@ -40,5 +40,8 @@
   },
   "instructions.md": {
     "instructions.html": "63cb985b"
+  },
+  "projects/ml_classifiers.qmd": {
+    "ml_classifiers.html": "7b05879e"
   }
 }
