@@ -1,0 +1,42 @@
+---
+title: "How Elites’ Polarised Rhetoric Shapes Voter Affect"
+---
+
+In one of my dissertation articles I built a measurement system that tracks messaging-to-attitude relationships at scale, with temporal precision, and directional specificity. The approach combines collecting digital trace data (i.e., political candidates' Tweets), transformer-based classification (enabling scale), high-frequency surveying (enabling temporal analysis), and directional modeling (revealing asymmetries).
+
+This unlocks research questions previously too expensive or time-consuming to answer: Does competitive messaging work? How fast do crises affect reputation? When do partnership announcements reshape perceptions? Do attacks require response?
+
+The infrastructure cost is modest: fine-tuning a language model requires around 10 hours of annotating data, 1 hour of writing code (spread over multiple iterations to find the optimal parameters), and minimal compute (in this case, my 2022 MacBook Pro). After that, classification is essentially free. If you already track attitudes through surveys or panels, adding the messaging side is straightforward.
+
+The political science findings -- that attacks work asymmetrically, effects emerge within weeks, and defensive messaging often fails -- probably do not necessarily generalize to use cases outside the political realm. But the real value is having a method to test these dynamics in your specific context rather than assuming what works in politics works for brands, or vice versa.
+
+## The Political Case Study
+
+For my dissertation, I tracked every cross-party attack during Germany's 2021 federal election and matched it with voter attitudes measured every two weeks. I collected 22,828 tweets from 1,537 candidates and paired them with bi-weekly surveys of about 1,000 voters from July 2021 through February 2022.
+
+I used GottBERT -- a German AI model trained on 145 billion words -- to detect genuinely polarizing rhetoric that explicitly draws "us versus them" battle lines. This delivered time-stamped, directional measurements of who attacked whom, when, and how often -- something no human coding team could achieve at this scale.
+
+## The Approach
+
+My methodological edge was **temporal precision**. I matched elite rhetoric to voter attitudes in two-week windows. If Survey Wave 1 happened July 1 and Wave 2 on July 15, I calculated the share of polarizing rhetoric from July 2-14 and correlated it with attitude changes between surveys. 
+
+## The Findings
+
+**When your side attacks opponents, your audience views those opponents more negatively.** Strong and significant. When Party A went after Party B, Party A's supporters developed measurably worse attitudes toward Party B. They did not like their own party better, though.
+
+The interesting part: **When your side gets attacked, your audience doesn't rally.** I expected supporters to circle the wagons when their party was under fire or develop hostility toward attackers. Neither happened. Effects were tiny, insignificant, and pointed in the opposite direction.
+
+I believe three factors explain this: attention asymmetry (you're more likely to see your own side's messages), motivated reasoning (people discount attacks on their side but process their side's attacks as valid), and noise normalization (audiences expect conflict, so attacks don't trigger rally effects).
+
+## The Good News
+
+You're probably worried about the implications for the state of democracy. The good news is, elite signals also work the other way round. When Germany formed its "traffic light coalition," supporters of coalition parties immediately showed increased warmth toward their new governing partners. Affective polarization decreased significantly within weeks. Elite signals about cooperation reshaped attitudes just as quickly as attacks did.
+
+## The Limitations
+
+I'm transparent: **This isn't definitive causal evidence.** Survey respondents might not have been exposed to specific tweets I measured. Omitted variables could drive both messaging and attitudes. Social media might not perfectly represent broader communication patterns.
+
+My defense: polarizing rhetoric on Twitter reflects broader patterns audiences encounter across channels. Journalists quote tweets, messaging coordinates across platforms, and digital communication signals what's happening elsewhere. The temporal precision, directional specificity, and theoretical consistency provide strong suggestive evidence -- but true causation would of course require experiments.
+
+That's my research contribution: not just documenting problems, but showing they're measurable, rapid, and therefore potentially solvable -- in politics and beyond.
+

@@ -13,5 +13,32 @@
   },
   "projects.qmd": {
     "projects.html": "20ad87d3"
+  },
+  "research_articles/aff_pol.qmd": {
+    "aff_pol.html": "e7250422"
+  },
+  "research_articles/bundles.qmd": {
+    "bundles.html": "95c06fa2"
+  },
+  "research_articles/media_alignment.qmd": {
+    "media_alignment.html": "5cdebd79"
+  },
+  "research_articles/mobility.qmd": {
+    "mobility.html": "31e074b0"
+  },
+  "content/post/2020-12-01-r-rmarkdown/index.Rmd": {
+    "index.html": "8bcb1a57"
+  },
+  "projects/boston_marathon_procrastination.qmd": {
+    "boston_marathon_procrastination.html": "b578cfd1"
+  },
+  "projects copy.qmd": {
+    "projects copy.html": "0c0fdf95"
+  },
+  "projects/hiring_cafe/data-science-field.qmd": {
+    "data-science-field.html": "8d8e41a4"
+  },
+  "instructions.md": {
+    "instructions.html": "63cb985b"
   }
 }

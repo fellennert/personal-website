@@ -1,2 +1,16 @@
 /.quarto/
 **/*.quarto_ipynb
+
+# Environment and secrets
+.env
+
+# macOS
+.DS_Store
+
+# Private data
+*.csv
+*.pkl
+
+# Project planning (not for repo)
+instructions.md
+project_backlog.md

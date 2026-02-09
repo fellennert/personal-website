@@ -1,0 +1,48 @@
+---
+title: "What Do People Actually Compare When Thinking About Intergenerational Mobility?"
+---
+
+
+When we study social mobility -- whether people end up better or worse off than their parents -- extant research tells us that folks typically focus on education, occupation, and income. These are important, but my co-authors and I kept wondering: is that what people actually think about when they compare themselves to their parents?
+
+Traditional mobility research imposes our categories on people. Qualitative research lets people speak for themselves but involves small samples that can't be compared across countries. Hence, in this project, my collaborators and I asked: what if we could combine both approaches; the scale of survey research with the openness of qualitative inquiry?
+
+## What We Did
+
+We surveyed nearly 5,000 people across Germany, Sweden, and the UK with one simple open-ended question: "When you compare how well you have done in life with your parents, what is the most important thing that you compare?"
+
+Respondents could write as much or as little as they wanted. We got back responses in three languages (German, English, and Swedish) with a median length of 4 words and a mean of 7.3 words. Short texts. Multiple languages. Nearly 5,000 responses.
+
+This presented exactly the kind of challenge that traditional topic modeling approaches struggle with. Bayesian mixed-membership models like Structural Topic Models work by treating documents as "bags of words" and identifying topics as words that frequently co-occur within documents. But when your documents are only 4-7 words long, you don't get much co-occurrence. And when you're working across three languages, simple word-matching approaches fail to recognize that "income," "Einkommen," and "inkomst" refer to the same concept.This created a methodological challenge for me -- as I was in charge of the analysis: how do you systematically analyze thousands of brief, multilingual text responses?
+
+I opted to use BERTopic, a machine learning approach that understands semantic meaning across languages. Unlike traditional topic modeling (which counts word co-occurrence), BERTopic uses contextual embeddings to recognize that "income," "Einkommen," and "inkomst" refer to the same concept even when they don't appear in the same documents.
+
+The pipeline is as follows: SBERT embedded responses in 512-dimensional semantic space $\rightarrow$ UMAP reduced dimensionality $\rightarrow$ HDBSCAN identified clusters $\rightarrow$ c-TF-IDF generated interpretable topic labels. 
+
+We started with fully inductive exploration (79 topics), then used theory-informed seed phrases for semi-supervised classification into 12 final categories.
+
+## What We Found
+
+**Conventional measures matter, but they're only half the story.** Yes, income, education, and occupation appeared prominently. But combined, they accounted for less than half of what people mentioned.
+
+**Housing dominates UK responses.** Home ownership concerns were 3x more prevalent in the UK than Germany or Sweden -- a methodological validation that our approach captures real contextual differences.
+
+**The categories vary systematically.** Swedes emphasized education comparisons; Germans focused on freedom and lifestyle; women highlighted education and family while men emphasized income; upwardly mobile people mentioned education and opportunities while downwardly mobile people focused on housing and economic instability.
+
+**Emerging dimensions matter.** Family life, economic security, lifestyle/freedom, well-being, climate concerns, and social relationships all appeared as distinct categories. A person might have more education and income than their parents but still feel downwardly mobile due to housing insecurity or precarity—and our method captures that.
+
+## Takeaways
+
+My biggest takeaway isn't a finding but a conviction about methods: we don't have to choose between qualitative richness and quantitative rigor. Computational text analysis, done thoughtfully, bridges these traditions. 
+
+The iterative approach mattered tremendously in bridging this gap: inductive exploration revealed what people actually talked about, then theory-informed refinement made it analytically useful. Neither pure induction nor pure deduction would have worked as well.
+
+Not all technical approaches work for all data. We needed BERTopic specifically because:
+
+(1) our responses were short (and traditional topic models need longer texts)
+(2) they were multilingual (requiring semantic embeddings, not word matching)
+(3) we wanted both exploration and validation (benefiting from the semi-supervised workflow).
+
+For broader research applications: when you want to know what people think without constraining their responses, open-ended questions + computational text analysis + representative sampling gives you something neither purely qualitative nor purely quantitative methods can provide alone. The barrier between these traditions keeps getting lower—we should take advantage of that.
+
+Reality is almost always more complex than our theories predict. Sometimes our measurement can reflect that complexity.

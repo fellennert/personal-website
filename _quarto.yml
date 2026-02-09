@@ -15,6 +15,26 @@ website:
         text: Research Output
       - href: teaching.qmd
         text: Teaching Materials
+  sidebar:
+    - style: "docked"
+      contents:
+        - index.qmd
+        - about.qmd
+    - title: "Coding Projects"
+      contents:
+        - projects.qmd
+        - projects/boston_marathon_procrastination.qmd
+        - projects/hiring_cafe/data-science-field.qmd
+    - title: "Research Output"
+      contents:
+        - research.qmd
+        - research_articles/aff_pol.qmd
+        - research_articles/bundles.qmd
+        - research_articles/media_alignment.qmd
+        - research_articles/mobility.qmd
+    - title: "Teaching Materials"
+      contents:
+        - teaching.qmd
 
 format:
   html:

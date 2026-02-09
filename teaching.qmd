@@ -1,5 +1,48 @@
 ---
-title: "About"
+title: "Teaching"
 ---
 
-About this site
+I've been teaching various semester-long seminars, 2-4 day workshops, and 2 hour sessions on topics related to computational methods for social scientists. Here's a link to my current course [Toolbox Computational Social Science](https://fellennert.github.io/toolbox_css/) which is geared toward graduate students in Computational Sociology at Leipzig University. 
+
+All of these courses were taught in English (with some German in between), using R and Python. For the semester-long courses, students had to write 10-15 page-long course papers to pass, for which I provided extensive mentorship through office hours and 1-on-1 coding sessions.
+
+Thematically, they covered the following techniques:
+
+- data acquisition (web scraping -- rvest and selenium; APIs; transcription and diarization -- whisper and pyannote; OCR -- tesselate)
+- data wrangling/cleaning (tidyverse, pandas, regular expressions)
+- data visualization (ggplot2, plotly)
+- quantitative text analysis and general machine learning
+    - bag-of-words approaches (tidytext, quanteda, topicmodels, tidymodels)
+    - deep learning/LLMs (transformers, sklearn, ollama)
+- agent-based simulations
+- spatial analysis (sf)
+- social network analysis (igraph, tidygraph)
+- regression methods (OLS, fixed effects, diff-in-diff, spatial regression).
+
+Below, you can find a list of classes and workshops that I have taught in chronological order (latest-earliest)
+
+## Past courses
+
+| Period | Course | Institution | Level | Hours |
+|--------|--------|-------------|-------|-------|
+| Oct 2025-Feb 2026 | Toolbox CSS | Leipzig University | Graduate | 64h |
+| Oct 2024-Feb 2025 | Toolbox CSS | Leipzig University | Graduate | 64h |
+| Apr 2024-Jul 2024 | Text Mining for Social Scientists | Leipzig University | Undergraduate | 32h |
+| Oct 2023-Feb 2024 | Toolbox CSS | Leipzig University | Graduate | 32h |
+| Jun 2023 | Summer Institute in Computational Social Science | Institut Polytechnique de Paris | Graduate and postgraduate | 30h |
+| May 2023 | Introduction to Data Management and Data Visualization in R | Sciences Po Bordeaux | Graduate and postgraduate | 10h |
+| Apr 2023-Jul 2023 | Text Mining for Social Scientists | Leipzig University | Undergraduate | 32h |
+| Feb 2023 | Introduction to Web Scraping with R | Workshops for Ukraine | - | 2h |
+| Jun 2022 | Summer Institute in Computational Social Science | Institut Polytechnique de Paris | Graduate and postgraduate | 30h |
+| Apr 2022-Jul 2022 | Text Mining for Social Scientists | Leipzig University | Undergraduate | 32h |
+| Oct 2021-Feb 2022 | Toolbox CSS | Leipzig University | Undergraduate | 32h |
+| Aug 2021-Sep 2021 | Introduction to Data Management and Data Visualization in R | Stockholm School of Economics | Graduate | 14h |
+| Oct 2020-Feb 2021 | Quantitative Methods for Social Scientists | University of Regensburg | Graduate | 32h |
+| Oct 2020-Feb 2021 | Big Data Analysis with R | University of Regensburg | Undergraduate | 32h |
+| Feb 2020-Jul 2020 | Social Network Analysis | University of Regensburg | Undergraduate | 32h |
+| Feb 2020-Jul 2020 | Big Data Analysis with R | University of Regensburg | Undergraduate | 32h |
+| Feb 2019-Jul 2019 | Social Network Analysis | University of Regensburg | Undergraduate | 32h |
+
+## Mentorship
+
+I also applied my knowledge when mentoring Bachelor's and Master's students during their final theses. These typically applied text analysis strategies to large-scale data. 
