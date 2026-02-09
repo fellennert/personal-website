@@ -25,6 +25,7 @@ website:
         - projects.qmd
         - projects/boston_marathon_procrastination.qmd
         - projects/hiring_cafe/data-science-field.qmd
+        - projects/ml_classifiers.qmd
     - title: "Research Output"
       contents:
         - research.qmd
