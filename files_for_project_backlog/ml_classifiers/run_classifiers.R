@@ -41,7 +41,8 @@ run_bow <- function(name, wf, label_tic = name) {
   tic(label_tic)
   fit_wf <- fit(wf, data = imdb_train)
   pred <- augment(fit_wf, imdb_test)
-  elapsed <- toc(quiet = TRUE)
+  out <- toc(quiet = TRUE)
+  elapsed <- out$toc - out$tic
   pred |>
     metric_set(accuracy, precision, recall, f_meas)(
       truth = sentiment,
@@ -83,7 +84,8 @@ imdb_afinn <- imdb_test |>
     .pred_class = replace_na(as.character(.pred_class), "positive"),
     .pred_class = factor(.pred_class, levels = c("positive", "negative"))
   )
-dict_time <- toc(quiet = TRUE)
+dict_out <- toc(quiet = TRUE)
+dict_time <- dict_out$toc - dict_out$tic
 dict_metrics <- imdb_afinn |>
   metric_set(accuracy, precision, recall, f_meas)(
     truth = sentiment,
@@ -176,7 +178,8 @@ If mixed, code by overall tone. Reply with the single word: positive or negative
     out <- ch$chat_structured(txt, type = sentiment_type)
     as.character(out$sentiment)
   }, .progress = TRUE)
-  gpt_time <- toc(quiet = TRUE)
+  gpt_out <- toc(quiet = TRUE)
+  gpt_time <- gpt_out$toc - gpt_out$tic
   gpt_df <- imdb_test_gpt |>
     select(sentiment) |>
     mutate(

@@ -10,7 +10,11 @@
 # Private data
 *.csv
 *.pkl
+*.md
 
 # Project planning (not for repo)
 instructions.md
 project_backlog.md
+
+/files_for_project_backlog
+/projects/hiring_cafe

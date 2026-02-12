@@ -43,5 +43,20 @@
   },
   "projects/ml_classifiers.qmd": {
     "ml_classifiers.html": "7b05879e"
+  },
+  "files_for_project_backlog/BERTopic/INSTRUCTIONS.md": {
+    "INSTRUCTIONS.html": "7b42d6fd"
+  },
+  "files_for_project_backlog/polarizing_terms/INSTRUCTIONS.md": {
+    "INSTRUCTIONS.html": "afb87fe1"
+  },
+  "projects/teaching_rag/index.qmd": {
+    "index.html": "08834544"
+  },
+  "projects/teaching_rag/teachrag.qmd": {
+    "teachrag.html": "f5c41861"
+  },
+  "projects/boston_marathon_data/boston_marathon_procrastination.qmd": {
+    "boston_marathon_procrastination.html": "e523a2e4"
   }
 }

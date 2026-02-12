@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="step-1-finding-the-segment">Step 1: Finding the Segment</h2>
 <p>The first half of the Boston Marathon course exists as Segment 12666537 on Strava. I did not go for a longer segment, since some people might choose to end their activity early or so. I will, of course, also miss folks who don’t start their watch <em>right at the start</em> or whose watches have GPS glitches. However, for 2025, around 6,000 segment times were recorded on this approximately 21km segment.</p>
 <p>Seeing full Strava segment lists requires you to be a summit user, so I had to log into my account. Also, it’s a dynamic website. So, I ended up using selenium for data acquisition.</p>
-<div id="69a447a5" class="cell" data-execution_count="1">
+<div id="22e443db" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
@@ -259,7 +259,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-2-collecting-activity-urls" class="level2">
 <h2 class="anchored" data-anchor-id="step-2-collecting-activity-urls">Step 2: Collecting Activity URLs</h2>
 <p>First, I needed to gather all the activity URLs. The segment leaderboard is paginated, so I wrote a loop to click through pages and collect links. I added random delays because I’m not a monster and the website had some latency (the latter could have also been achieved – and made more robust – by asking selenium to wait until the website was done building).</p>
-<div id="18f708a3" class="cell" data-execution_count="2">
+<div id="aaef2770" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>activity_urls <span class="op">=</span> []</span>
@@ -292,7 +292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Not get blocked by Strava (hence the generous random delays)</li>
 </ol>
 <p>My first attempt had some retry logic for when elements didn’t load properly (the site proved to be fairly sketchy and unstable):</p>
-<div id="23ee7b04" class="cell" data-execution_count="3">
+<div id="3a2945a4" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> url <span class="kw">in</span> current_urls:</span>
@@ -324,7 +324,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>Eventually, I refined my approach to directly construct the overview URL using a RegEx which stabilized things. I hit a couple of runtime errors, so in the end I stopped my collection after getting the ~1000 runners who had finished the first half Strava segment fastest:</p>
-<div id="c94408e7" class="cell" data-execution_count="4">
+<div id="4ece428a" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> url <span class="kw">in</span> current_urls:</span>

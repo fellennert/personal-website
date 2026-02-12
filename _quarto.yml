@@ -1,5 +1,9 @@
 project:
   type: website
+  render:
+    - "**/*.qmd"
+    - "**/*.ipynb"
+    - "!files_for_project_backlog/**"
 
 website:
   title: "Felix Lennert"
@@ -15,27 +19,6 @@ website:
         text: Research Output
       - href: teaching.qmd
         text: Teaching Materials
-  sidebar:
-    - style: "docked"
-      contents:
-        - index.qmd
-        - about.qmd
-    - title: "Coding Projects"
-      contents:
-        - projects.qmd
-        - projects/boston_marathon_procrastination.qmd
-        - projects/hiring_cafe/data-science-field.qmd
-        - projects/ml_classifiers.qmd
-    - title: "Research Output"
-      contents:
-        - research.qmd
-        - research_articles/aff_pol.qmd
-        - research_articles/bundles.qmd
-        - research_articles/media_alignment.qmd
-        - research_articles/mobility.qmd
-    - title: "Teaching Materials"
-      contents:
-        - teaching.qmd
 
 format:
   html:
@@ -44,6 +27,10 @@ format:
       - brand
     css: styles.css
     toc: true
+    include-in-header:
+      - text: |
+          <script data-goatcounter="https://fellennert.goatcounter.com/count"
+                  async src="https://gc.zgo.at/count.js"></script>
 
 
 

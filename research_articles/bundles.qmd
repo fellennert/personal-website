@@ -1,5 +1,6 @@
 ---
 title: "What 11,000 Swedish Twitter Users Taught Me About Lifestyle Polarization"
+freeze: true
 ---
 
 We're all familiar with the cultural divides in American politics: the Prius-driving liberal versus the pickup-driving conservative. But my co-authors and I wondered -- is this phenomenon unique to the American two-party system, or does it show up in countries with more diverse political landscapes? To find out, we turned to Sweden, a multi-party democracy where voters choose among eight parliamentary parties across the political spectrum. 

@@ -1,5 +1,6 @@
 ---
 title: "What Do People Actually Compare When Thinking About Intergenerational Mobility?"
+freeze: true
 ---
 
 

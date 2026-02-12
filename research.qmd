@@ -1,5 +1,6 @@
 ---
 title: "Academic Research"
+freeze: true
 ---
 
 What I like about the social sciences is that instead of just building models to predict outcomes, we get to dig into the *why* behind human behavior. Given that we all witness human behavior all the time, everyone has their own little theories of why people do what they do. The challenge of social science research is to move beyond this anecdotal evidence and figure out what actually drives behavior on a larger scale. The crux is then to communicate these insights in a way that is understandable and useful to others. On this page, I share some of the academic research projects that I conducted during my Ph.D.
@@ -14,8 +15,8 @@ Do people become more polarized because politicians say polarizing things in the
 
 When a political party attacks its opponents on Twitter, does it make voters dislike those opponents more? Using transformer models and OLS regression, I analyzed tweets from candidates in Germany's 2021 election alongside biweekly voter survey data to find out. The answer is yes: when Party A criticizes Party B on social media, Party A's supporters report disliking Party B more. The effect is strongest among people who already identify strongly with their party, and it holds up regardless of whether the parties might form a coalition together or how ideologically similar they are. Also, the opposite is not true: a party doesn't criticize other parties more if they know that their supporters don't like these parties. [READ MORE HERE.](./research_articles/aff_pol.qmd)
 
-### Do Liberals Drive Volvos Everywhere? Assessing Cultural Bundles in Sweden
-*with Anastasia Menshikova, Elida Izani Binti Ibrahim, and Miriam Hurtado Bodell; currently under review at Social Media+Society*
+### Partisan Tastes Or Ideological Divides? Everyday Interests And Political Identities In A Multi-Party System
+*with Anastasia Menshikova, Elida Izani Binti Ibrahim, and Miriam Hurtado Bodell; [preprint](https://osf.io/preprints/socarxiv/c4296); currently under review at Journal of Computational Social Science*
 
 In the U.S., we know that political views often cluster with lifestyle choices -- like the stereotype that liberals drive Priuses. But does this happen in countries with more than two major parties? We analyzed what 12,000 politically active Swedish Twitter users follow using mixed membership clustering to see if political affiliation predicts their cultural tastes. It does. Swedish voters' media consumption, cultural interests, religious views, and even sense of humor align with their partisan identity. Political polarization isn't just about policy disagreements -- it's seeping into everyday lifestyle choices, even in a multi-party democracy like Sweden. [READ MORE HERE.](./research_articles/bundles.qmd)
 

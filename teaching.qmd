@@ -1,5 +1,6 @@
 ---
 title: "Teaching"
+freeze: true
 ---
 
 I've been teaching various semester-long seminars, 2-4 day workshops, and 2 hour sessions on topics related to computational methods for social scientists. Here's a link to my current course [Toolbox Computational Social Science](https://fellennert.github.io/toolbox_css/) which is geared toward graduate students in Computational Sociology at Leipzig University. 

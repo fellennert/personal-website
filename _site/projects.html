@@ -40,7 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b337f537912f5ab074b938eebad4c5d7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-5b4ad623e5705c0698d39aec6f10cf02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -91,7 +91,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -99,7 +99,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">About Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects.html"> 
+    <a class="nav-link active" href="./projects.html" aria-current="page"> 
 <span class="menu-text">Coding Projects</span></a>
   </li>  
   <li class="nav-item">
@@ -116,39 +116,10 @@ ul.task-list li input[type="checkbox"] {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Projects</li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Felix Lennert</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./about.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About Me</span></a>
-  </div>
-</li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -156,6 +127,7 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#what-we-can-learn-about-runners-from-strava" id="toc-what-we-can-learn-about-runners-from-strava" class="nav-link active" data-scroll-target="#what-we-can-learn-about-runners-from-strava">What we can learn about runners from Strava</a></li>
+  <li><a href="#a-local-rag-assistant-for-teaching-materials" id="toc-a-local-rag-assistant-for-teaching-materials" class="nav-link" data-scroll-target="#a-local-rag-assistant-for-teaching-materials">A local RAG assistant for teaching materials</a></li>
   </ul>
 </nav>
     </div>
@@ -181,12 +153,15 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This section is where theory meets practice. Each project here represents a different slice of what I bring to data work: collecting messy data from the web, building and comparing machine learning models, applying cutting-edge NLP techniques, creating interactive tools to make my partner happy, and making complex methods accessible to others.</p>
-<p>Some of these grew out of pure curiosity (what patterns emerge in song lyrics? Can we detect “eras”?), others from practical needs (how do I make my teaching materials easily searchable for my students?), and a few from different research challenges (what is the best classifier for a job? how good are LLMs <em>actually</em>? is political polarization really so <em>hot</em>?). Together, they show how I approach problems: I start with a question, pick the right tools and data for the job, and don’t stop until I’ve found an answer worth sharing.</p>
-<p>You’ll see a mix of techniques here: classic machine learning, modern transformer models, web scraping, interactive dashboards, and RAG applications. But the thread that runs through all of them is the same: how can I turn raw data into understandable insights, into something people can actually understand and use.</p>
+<p>This section is where theory meets practice. Each project here represents a different slice of what I bring to data work: collecting messy data from the web, building and comparing machine learning models, applying cutting-edge NLP techniques, and making complex methods accessible to others. These are <strong>educational reports and dashboards</strong> to showcase approach and results—not production applications—and <strong>underlying data are not shared</strong>; the focus is on methodology, visualizations, and insights.</p>
+<p>You’ll see a mix of techniques: classic machine learning, modern transformer models, web scraping, and interactive visualizations. The thread that runs through all of them is the same: turning raw data into understandable insights that people can actually use.</p>
 <section id="what-we-can-learn-about-runners-from-strava" class="level3">
 <h3 class="anchored" data-anchor-id="what-we-can-learn-about-runners-from-strava">What we can learn about runners from Strava</h3>
-<p>I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there’s no statistically significant evidence that shoe brand affects how hard you work during a marathon. <a href="./projects/boston_marathon_procrastination.html">READ MORE</a></p>
+<p>I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there’s no statistically significant evidence that shoe brand affects how hard you work during a marathon. <a href="./projects/boston_marathon_data/boston_marathon_procrastination.html">READ MORE</a></p>
+</section>
+<section id="a-local-rag-assistant-for-teaching-materials" class="level3">
+<h3 class="anchored" data-anchor-id="a-local-rag-assistant-for-teaching-materials">A local RAG assistant for teaching materials</h3>
+<p>To help students navigate a semester’s worth of Computational Social Science materials – i.e., lecture notes and topic-specific notebooks – I built a Retrieval-Augmented Generation (RAG) system that answers questions strictly based on the course resources. Using the <code>ragnar</code> package in R, I convert documents to markdown, chunk them along headings, and store them in a DuckDB-backed vector index with embeddings from a local <code>nomic-embed-text</code> model. Students can then ask questions and get answers based on the course resources using either a local Ollama model (<code>qwen2.5:3b</code>) or the Claude API (granted they locally provide an Anthropic API key or set it as an environment variable). To make interactions more natural, I implemented this chatbot in a simple RShiny app with a conversational UI. The R package runs fully locally, comes with my teaching materials pre-installed and is available on <a href="https://github.com/fellennert/teachrag">GitHub</a>. Further, options to use your own materials are provided (this functionality is still experimental and may not work for all use cases). <a href="./projects/teaching_rag/teachrag.html">READ MORE</a></p>
 
 
 </section>
@@ -265,7 +240,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/felixlennert\.xyz");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -1,5 +1,6 @@
 ---
 title: "How Elites’ Polarised Rhetoric Shapes Voter Affect"
+freeze: true
 ---
 
 In one of my dissertation articles I built a measurement system that tracks messaging-to-attitude relationships at scale, with temporal precision, and directional specificity. The approach combines collecting digital trace data (i.e., political candidates' Tweets), transformer-based classification (enabling scale), high-frequency surveying (enabling temporal analysis), and directional modeling (revealing asymmetries).

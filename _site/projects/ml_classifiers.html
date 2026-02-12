@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Felix Lennert">
-<meta name="dcterms.date" content="2026-02-09">
+<meta name="dcterms.date" content="2026-02-10">
 
 <title>Training and Comparing ML Classifiers on IMDb Reviews – Felix Lennert</title>
 <style>
@@ -201,7 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#recipes" id="toc-recipes" class="nav-link" data-scroll-target="#recipes">Recipes</a></li>
   <li><a href="#dictionary-afinn" id="toc-dictionary-afinn" class="nav-link" data-scroll-target="#dictionary-afinn">Dictionary (AFINN)</a></li>
   <li><a href="#bag-of-words-models" id="toc-bag-of-words-models" class="nav-link" data-scroll-target="#bag-of-words-models">Bag-of-words models</a></li>
-  <li><a href="#bert-python" id="toc-bert-python" class="nav-link" data-scroll-target="#bert-python">BERT (Python)</a></li>
+  <li><a href="#bert-python-via-reticulate" id="toc-bert-python-via-reticulate" class="nav-link" data-scroll-target="#bert-python-via-reticulate">BERT (Python via reticulate)</a></li>
   <li><a href="#bert-metrics-and-llm-zero-shot" id="toc-bert-metrics-and-llm-zero-shot" class="nav-link" data-scroll-target="#bert-metrics-and-llm-zero-shot">BERT metrics and LLM zero-shot</a></li>
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
@@ -231,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 9, 2026</p>
+      <p class="date">February 10, 2026</p>
     </div>
   </div>
   
@@ -245,307 +245,437 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="description-and-motivation" class="level2">
 <h2 class="anchored" data-anchor-id="description-and-motivation">Description and motivation</h2>
-<p>For a graduate Computational Social Science course, I compared supervised text classification approaches: dictionary-based, bag-of-words models, fine-tuned BERT, and zero-shot prompting with a local LLM. Using 500 training examples from IMDb reviews, I show how preprocessing and model choice affect accuracy, precision, recall, F1, and runtime.</p>
+<p>I taught a graduate Computational Social Science course at Leipzig University that focused heavily on quantitative text analysis. Inevitably, students asked a very practical question: <strong>given limited time and compute, which supervised text classification approach should we choose?</strong> In this report, I therefore compare four families of models for sentiment classification of IMDb movie reviews: a dictionary-based method, several bag-of-words classifiers, a fine-tuned BERT model, and a zero-shot local LLM. Using a fixed budget of 500 labeled training examples for all trained models, I document how preprocessing and model choice affect accuracy, precision, recall, F1, and runtime—and what I would recommend in different real-world scenarios.</p>
 </section>
 <section id="data-source" class="level2">
 <h2 class="anchored" data-anchor-id="data-source">Data source</h2>
-<p>IMDb movie reviews with binary sentiment labels (positive/negative) from <a href="https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews">Kaggle</a>. Data are not published; the code below assumes the CSV lives in <code>files_for_project_backlog/ml_classifiers/imdb-reviews.csv</code>.</p>
+<p>The analysis uses IMDb movie reviews with binary sentiment labels (positive/negative) from <a href="https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews">Kaggle</a>, a widely used benchmark in sentiment analysis. The data are pre-labeled, reasonably balanced across classes, and contain long-form, naturalistic text—making them well suited to comparing shallow and deep text classifiers on the same task. For copyright reasons, the data themselves are not published here; the code below assumes the CSV lives in <code>files_for_project_backlog/ml_classifiers/imdb-reviews.csv</code>.</p>
 </section>
 <section id="outline" class="level2">
 <h2 class="anchored" data-anchor-id="outline">Outline</h2>
-<p>We load the data, split 500 train / remainder test (stratified), and run: (1) dictionary (AFINN), (2) bag-of-words (Naive Bayes, logistic, Lasso, Ridge, SVM, random forest, XGBoost), (3) BERT, (4) LLM zero-shot. Preprocessing is tokenization, stop-word removal, token filter (top 1,000), TF-IDF; SVM adds normalization.</p>
+<p>The workflow is as follows:</p>
+<ol type="1">
+<li><strong>Load and split the data</strong>: 500 reviews for training (stratified by sentiment), the remainder as a held-out test set.</li>
+<li><strong>Preprocess text</strong>: tokenize, remove stop words, optionally stem (for the dictionary method), filter to the 1,000 most frequent tokens, and create TF–IDF features (with additional normalization for SVM).</li>
+<li><strong>Train and evaluate models</strong>:
+<ul>
+<li>Dictionary-based sentiment scores using AFINN.</li>
+<li>Bag-of-words models: Naive Bayes, logistic regression, Lasso, Ridge, linear SVM, random forest, and XGBoost.</li>
+<li>Fine-tuned BERT (<code>bert-base-uncased</code>).</li>
+<li>Zero-shot local LLM classification using Qwen 2.5 3B via Ollama.</li>
+</ul></li>
+<li><strong>Compare results</strong>: summarize performance (accuracy, precision, recall, F1) and runtime across all approaches, and interpret the trade-offs.</li>
+<li><strong>(Optional) Tune models</strong>: use cross-validation to optimize hyperparameters (e.g., regularization strength for Lasso/Ridge, number of tokens, tree depth) and adjust BERT training settings (epochs, learning rate, max sequence length) or LLM prompts for further gains.</li>
+</ol>
 </section>
 <section id="analysis" class="level2">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
 <section id="setup-and-data-split" class="level3">
 <h3 class="anchored" data-anchor-id="setup-and-data-split">Setup and data split</h3>
-<pre class="{r}"><code>#| label: setup
-#| output: false
-
-needs(tidyverse, tidytext, textrecipes, tidymodels, workflows, yardstick, discrim,
-      naivebayes, SnowballC, stopwords, textdata, tictoc, jsonlite,
-      glmnet, LiblineaR, ranger, xgboost, here)
-
-base &lt;- here("files_for_project_backlog", "ml_classifiers")
-imdb_raw &lt;- read_csv(here(base, "imdb-reviews.csv"), show_col_types = FALSE) |&gt;
-  rename(text = review)
-
-set.seed(123)
-split &lt;- initial_split(imdb_raw, prop = 500 / nrow(imdb_raw), strata = sentiment)
-imdb_train &lt;- training(split)
-imdb_test &lt;- testing(split)
-
-imdb_train |&gt; write_csv(here(base, "train_split.csv"))
-imdb_test |&gt; write_csv(here(base, "test_split.csv"))</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">needs</span>(tidyverse, tidytext, textrecipes, tidymodels, workflows, yardstick, discrim,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>      naivebayes, SnowballC, stopwords, textdata, tictoc, jsonlite,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>      glmnet, LiblineaR, ranger, xgboost, here, reticulate)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"files_for_project_backlog"</span>, <span class="st">"ml_classifiers"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>imdb_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(base, <span class="st">"imdb-reviews.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">text =</span> review)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(imdb_raw, <span class="at">prop =</span> <span class="dv">500</span> <span class="sc">/</span> <span class="fu">nrow</span>(imdb_raw), <span class="at">strata =</span> sentiment)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>imdb_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="sc">|&gt;</span> <span class="fu">write_csv</span>(<span class="fu">here</span>(base, <span class="st">"train_split.csv"</span>))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>imdb_test <span class="sc">|&gt;</span> <span class="fu">write_csv</span>(<span class="fu">here</span>(base, <span class="st">"test_split.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="recipes" class="level3">
 <h3 class="anchored" data-anchor-id="recipes">Recipes</h3>
-<pre class="{r}"><code>#| label: recipes
-#| output: false
-
-recipe_bow &lt;- recipe(sentiment ~ text, data = imdb_train) |&gt;
-  step_tokenize(text) |&gt;
-  step_tokenfilter(text, max_tokens = 1000) |&gt;
-  step_tfidf(text)
-
-recipe_svm &lt;- recipe(sentiment ~ text, data = imdb_train) |&gt;
-  step_tokenize(text) |&gt;
-  step_tokenfilter(text, max_tokens = 1000) |&gt;
-  step_tfidf(text) |&gt;
-  step_normalize(all_predictors())
-
-run_bow &lt;- function(name, wf, label_tic = name) {
-  tic(label_tic)
-  fit_wf &lt;- fit(wf, data = imdb_train)
-  pred &lt;- augment(fit_wf, imdb_test)
-  elapsed &lt;- toc(quiet = TRUE)
-  pred |&gt;
-    metric_set(accuracy, precision, recall, f_meas)(
-      truth = sentiment,
-      estimate = .pred_class,
-      event_level = "second"
-    ) |&gt;
-    pivot_wider(names_from = .metric, values_from = .estimate) |&gt;
-    mutate(classifier = name, runtime_seconds = round(elapsed, 2), .before = 1) |&gt;
-    rename(f1 = f_meas) |&gt;
-    select(classifier, accuracy, precision, recall, f1, runtime_seconds)
-}</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>recipe_bow <span class="ot">&lt;-</span> <span class="fu">recipe</span>(sentiment <span class="sc">~</span> text, <span class="at">data =</span> imdb_train) <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenize</span>(text) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenfilter</span>(text, <span class="at">max_tokens =</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tfidf</span>(text)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>recipe_svm <span class="ot">&lt;-</span> <span class="fu">recipe</span>(sentiment <span class="sc">~</span> text, <span class="at">data =</span> imdb_train) <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenize</span>(text) <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenfilter</span>(text, <span class="at">max_tokens =</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tfidf</span>(text) <span class="sc">|&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_predictors</span>())</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>run_bow <span class="ot">&lt;-</span> <span class="cf">function</span>(name, wf, <span class="at">label_tic =</span> name) {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tic</span>(label_tic)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  fit_wf <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf, <span class="at">data =</span> imdb_train)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">augment</span>(fit_wf, imdb_test)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  end_time <span class="ot">&lt;-</span> <span class="fu">toc</span>(<span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  elapsed <span class="ot">&lt;-</span> end_time<span class="sc">$</span>toc<span class="sc">-</span>end_time<span class="sc">$</span>tic</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  pred <span class="sc">|&gt;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">sentiment =</span> <span class="fu">factor</span>(sentiment, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"negative"</span>, <span class="st">"positive"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">metric_set</span>(accuracy, precision, recall, f_meas)(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">truth =</span> sentiment,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">estimate =</span> .pred_class</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate) <span class="sc">|&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">classifier =</span> name, <span class="at">runtime_seconds =</span> <span class="fu">round</span>(elapsed, <span class="dv">2</span>), <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">f1 =</span> f_meas) <span class="sc">|&gt;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(classifier, accuracy, precision, recall, f1, runtime_seconds)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="dictionary-afinn" class="level3">
 <h3 class="anchored" data-anchor-id="dictionary-afinn">Dictionary (AFINN)</h3>
-<p>Tokenize, stem, match AFINN lexicon, average score per review; classify by sign.</p>
-<pre class="{r}"><code>#| label: dict
-
-tic("Dictionary (AFINN)")
-afinn_stemmed &lt;- get_sentiments("afinn") |&gt;
-  mutate(stemmed = wordStem(word, language = "en"))
-scored &lt;- imdb_test |&gt;
-  rowid_to_column("doc") |&gt;
-  unnest_tokens(token, text) |&gt;
-  anti_join(get_stopwords(), by = c("token" = "word")) |&gt;
-  mutate(stemmed = wordStem(token, language = "en")) |&gt;
-  inner_join(afinn_stemmed, by = "stemmed", relationship = "many-to-many") |&gt;
-  group_by(doc) |&gt;
-  summarise(sentiment_score = mean(value), .groups = "drop") |&gt;
-  mutate(
-    .pred_class = if_else(sentiment_score &gt; 0, "positive", "negative"),
-    .pred_class = factor(.pred_class, levels = c("positive", "negative"))
-  )
-imdb_afinn &lt;- imdb_test |&gt;
-  rowid_to_column("doc") |&gt;
-  select(doc, sentiment) |&gt;
-  mutate(sentiment = factor(sentiment, levels = c("positive", "negative"))) |&gt;
-  left_join(select(scored, doc, .pred_class), by = "doc") |&gt;
-  mutate(
-    .pred_class = replace_na(as.character(.pred_class), "positive"),
-    .pred_class = factor(.pred_class, levels = c("positive", "negative"))
-  )
-dict_time &lt;- toc(quiet = TRUE)
-dict_metrics &lt;- imdb_afinn |&gt;
-  metric_set(accuracy, precision, recall, f_meas)(
-    truth = sentiment,
-    estimate = .pred_class,
-    event_level = "second"
-  ) |&gt;
-  pivot_wider(names_from = .metric, values_from = .estimate) |&gt;
-  mutate(classifier = "Dictionary (AFINN)", runtime_seconds = round(dict_time, 2), .before = 1) |&gt;
-  rename(f1 = f_meas) |&gt;
-  select(classifier, accuracy, precision, recall, f1, runtime_seconds)</code></pre>
+<p>As a minimal baseline, I first use a dictionary-based classifier. Reviews are tokenized and stemmed, then matched against the AFINN sentiment lexicon. For each review, I compute the mean sentiment score across all matched tokens and classify it as <strong>positive</strong> if the score is greater than zero and <strong>negative</strong> otherwise. This method is fast and transparent but intentionally ignores word order and context.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>(<span class="st">"Dictionary (AFINN)"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>afinn_stemmed <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">"afinn"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stemmed =</span> <span class="fu">wordStem</span>(word, <span class="at">language =</span> <span class="st">"en"</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>scored <span class="ot">&lt;-</span> imdb_test <span class="sc">|&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowid_to_column</span>(<span class="st">"doc"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(token, text) <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(<span class="fu">get_stopwords</span>(), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"token"</span> <span class="ot">=</span> <span class="st">"word"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stemmed =</span> <span class="fu">wordStem</span>(token, <span class="at">language =</span> <span class="st">"en"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(afinn_stemmed, <span class="at">by =</span> <span class="st">"stemmed"</span>, <span class="at">relationship =</span> <span class="st">"many-to-many"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(doc) <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">sentiment_score =</span> <span class="fu">mean</span>(value), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">.pred_class =</span> <span class="fu">if_else</span>(sentiment_score <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"positive"</span>, <span class="st">"negative"</span>),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">.pred_class =</span> <span class="fu">factor</span>(.pred_class, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"positive"</span>, <span class="st">"negative"</span>))</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>imdb_afinn <span class="ot">&lt;-</span> imdb_test <span class="sc">|&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowid_to_column</span>(<span class="st">"doc"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(doc, sentiment) <span class="sc">|&gt;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sentiment =</span> <span class="fu">factor</span>(sentiment, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"positive"</span>, <span class="st">"negative"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(scored, doc, .pred_class), <span class="at">by =</span> <span class="st">"doc"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">.pred_class =</span> <span class="fu">replace_na</span>(<span class="fu">as.character</span>(.pred_class), <span class="st">"positive"</span>),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">.pred_class =</span> <span class="fu">factor</span>(.pred_class, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"positive"</span>, <span class="st">"negative"</span>))</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>dict_time <span class="ot">&lt;-</span> <span class="fu">toc</span>(<span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>elapsed <span class="ot">&lt;-</span> dict_time<span class="sc">$</span>toc<span class="sc">-</span>dict_time<span class="sc">$</span>tic</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>dict_metrics <span class="ot">&lt;-</span> imdb_afinn <span class="sc">|&gt;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">metric_set</span>(accuracy, precision, recall, f_meas)(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">truth =</span> sentiment,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> .pred_class,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">event_level =</span> <span class="st">"second"</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate) <span class="sc">|&gt;</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">classifier =</span> <span class="st">"Dictionary (AFINN)"</span>, <span class="at">runtime_seconds =</span> <span class="fu">round</span>(elapsed, <span class="dv">2</span>), <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">f1 =</span> f_meas) <span class="sc">|&gt;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(classifier, accuracy, precision, recall, f1, runtime_seconds)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="bag-of-words-models" class="level3">
 <h3 class="anchored" data-anchor-id="bag-of-words-models">Bag-of-words models</h3>
-<p>Same TF-IDF preprocessing; SVM adds normalization.</p>
-<pre class="{r}"><code>#| label: bow
-
-wf_nb &lt;- workflow() |&gt; add_recipe(recipe_bow) |&gt; add_model(
-  naive_Bayes() |&gt; set_engine("naivebayes") |&gt; set_mode("classification")
-)
-wf_glm &lt;- workflow() |&gt; add_recipe(recipe_bow) |&gt; add_model(
-  logistic_reg() |&gt; set_engine("glm") |&gt; set_mode("classification")
-)
-wf_lasso &lt;- workflow() |&gt; add_recipe(recipe_bow) |&gt; add_model(
-  logistic_reg(penalty = 0.01, mixture = 1) |&gt; set_engine("glmnet") |&gt; set_mode("classification")
-)
-wf_ridge &lt;- workflow() |&gt; add_recipe(recipe_bow) |&gt; add_model(
-  logistic_reg(penalty = 0.01, mixture = 0) |&gt; set_engine("glmnet") |&gt; set_mode("classification")
-)
-wf_svm &lt;- workflow() |&gt; add_recipe(recipe_svm) |&gt; add_model(
-  svm_linear() |&gt; set_engine("LiblineaR") |&gt; set_mode("classification")
-)
-wf_rf &lt;- workflow() |&gt; add_recipe(recipe_bow) |&gt; add_model(
-  rand_forest(trees = 100) |&gt; set_engine("ranger") |&gt; set_mode("classification")
-)
-wf_xgb &lt;- workflow() |&gt; add_recipe(recipe_bow) |&gt; add_model(
-  boost_tree(trees = 50) |&gt; set_engine("xgboost") |&gt; set_mode("classification")
-)
-
-bow_metrics &lt;- bind_rows(
-  run_bow("Naive Bayes (TF-IDF)", wf_nb),
-  run_bow("Logistic regression (glm)", wf_glm),
-  run_bow("Lasso (glmnet)", wf_lasso),
-  run_bow("Ridge (glmnet)", wf_ridge),
-  run_bow("SVM linear (LiblineaR)", wf_svm),
-  run_bow("Random forest (ranger)", wf_rf),
-  run_bow("XGBoost", wf_xgb)
-)</code></pre>
-</section>
-<section id="bert-python" class="level3">
-<h3 class="anchored" data-anchor-id="bert-python">BERT (Python)</h3>
-<p>Fine-tuned <code>bert-base-uncased</code> on 500 samples. Writes metrics to <code>bert_results.json</code> for the R chunk below.</p>
-<div id="bert" class="cell" data-execution_count="1">
+<p>Next, I apply a family of supervised models to the same TF–IDF representation of the reviews (with an additional normalization step for SVM). These models keep the simplicity and speed of the bag-of-words assumption but use more flexible decision rules: from Naive Bayes and (penalized) logistic regression to linear SVMs and tree-based ensembles (random forest, XGBoost). All models are trained on exactly the same 500 labeled examples to make their comparison fair.</p>
+<div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> Dataset, DataLoader</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> BertTokenizer, BertModel</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, precision_score, recall_score, f1_score</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Find base: Quarto runs from project root; cwd may vary</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> [Path.cwd(), Path.cwd().parent]:</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  candidate <span class="op">=</span> p <span class="op">/</span> <span class="st">"files_for_project_backlog"</span> <span class="op">/</span> <span class="st">"ml_classifiers"</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (candidate <span class="op">/</span> <span class="st">"train_split.csv"</span>).exists():</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    base <span class="op">=</span> candidate</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  base <span class="op">=</span> Path.cwd() <span class="op">/</span> <span class="st">"files_for_project_backlog"</span> <span class="op">/</span> <span class="st">"ml_classifiers"</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>train_df <span class="op">=</span> pd.read_csv(base <span class="op">/</span> <span class="st">"train_split.csv"</span>)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(base <span class="op">/</span> <span class="st">"test_split.csv"</span>)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"review"</span> <span class="kw">in</span> train_df.columns:</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  train_df <span class="op">=</span> train_df.rename(columns<span class="op">=</span>{<span class="st">"review"</span>: <span class="st">"text"</span>})</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"review"</span> <span class="kw">in</span> test_df.columns:</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  test_df <span class="op">=</span> test_df.rename(columns<span class="op">=</span>{<span class="st">"review"</span>: <span class="st">"text"</span>})</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>label_map <span class="op">=</span> {<span class="st">"negative"</span>: <span class="dv">0</span>, <span class="st">"positive"</span>: <span class="dv">1</span>}</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_df[<span class="st">"text"</span>].tolist()</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> [label_map[<span class="bu">str</span>(s).strip().lower()] <span class="cf">for</span> s <span class="kw">in</span> train_df[<span class="st">"sentiment"</span>]]</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test_df[<span class="st">"text"</span>].tolist()</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> [label_map[<span class="bu">str</span>(s).strip().lower()] <span class="cf">for</span> s <span class="kw">in</span> test_df[<span class="st">"sentiment"</span>]]</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SentenceDataset(Dataset):</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, texts, labels, tokenizer, max_len<span class="op">=</span><span class="dv">128</span>):</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.texts, <span class="va">self</span>.labels, <span class="va">self</span>.tokenizer, <span class="va">self</span>.max_len <span class="op">=</span> texts, labels, tokenizer, max_len</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.texts)</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    enc <span class="op">=</span> <span class="va">self</span>.tokenizer.encode_plus(<span class="bu">str</span>(<span class="va">self</span>.texts[idx]), max_length<span class="op">=</span><span class="va">self</span>.max_len,</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>      padding<span class="op">=</span><span class="st">"max_length"</span>, truncation<span class="op">=</span><span class="va">True</span>, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"input_ids"</span>: enc[<span class="st">"input_ids"</span>].flatten(), <span class="st">"attention_mask"</span>: enc[<span class="st">"attention_mask"</span>].flatten(),</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>            <span class="st">"label"</span>: torch.tensor(<span class="va">self</span>.labels[idx], dtype<span class="op">=</span>torch.<span class="bu">long</span>)}</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BertClassifier(nn.Module):</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dropout<span class="op">=</span><span class="fl">0.1</span>):</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.bert <span class="op">=</span> BertModel.from_pretrained(<span class="st">"bert-base-uncased"</span>)</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(dropout)</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(<span class="dv">768</span>, <span class="dv">2</span>)</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> forward(<span class="va">self</span>, input_ids, attention_mask):</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> <span class="va">self</span>.bert(input_ids<span class="op">=</span>input_ids, attention_mask<span class="op">=</span>attention_mask)[<span class="dv">1</span>]</span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.classifier(<span class="va">self</span>.dropout(out))</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> torch.device(<span class="st">"mps"</span> <span class="cf">if</span> torch.backends.mps.is_available() <span class="cf">else</span> <span class="st">"cuda"</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">"cpu"</span>)</span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> BertTokenizer.from_pretrained(<span class="st">"bert-base-uncased"</span>)</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>train_ds <span class="op">=</span> SentenceDataset(X_train, y_train, tokenizer)</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>test_ds <span class="op">=</span> SentenceDataset(X_test, y_test, tokenizer)</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>train_loader <span class="op">=</span> DataLoader(train_ds, batch_size<span class="op">=</span><span class="dv">16</span>, shuffle<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> DataLoader(test_ds, batch_size<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> BertClassifier().to(device)</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> torch.optim.AdamW(model.parameters(), lr<span class="op">=</span><span class="fl">2e-5</span>)</span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>criterion <span class="op">=</span> nn.CrossEntropyLoss()</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> time.perf_counter()</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  model.train()</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> batch <span class="kw">in</span> train_loader:</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>    opt.zero_grad()</span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> model(batch[<span class="st">"input_ids"</span>].to(device), batch[<span class="st">"attention_mask"</span>].to(device))</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    criterion(out, batch[<span class="st">"label"</span>].to(device)).backward()</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>    opt.step()</span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">eval</span>()</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>preds, labels <span class="op">=</span> [], []</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> batch <span class="kw">in</span> test_loader:</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> model(batch[<span class="st">"input_ids"</span>].to(device), batch[<span class="st">"attention_mask"</span>].to(device))</span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>    preds.extend(out.argmax(<span class="dv">1</span>).cpu().tolist())</span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>    labels.extend(batch[<span class="st">"label"</span>].tolist())</span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> t0</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>bert_results <span class="op">=</span> {</span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>  <span class="st">"accuracy"</span>: <span class="bu">float</span>(accuracy_score(labels, preds)),</span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>  <span class="st">"precision"</span>: <span class="bu">float</span>(precision_score(labels, preds, average<span class="op">=</span><span class="st">"weighted"</span>, zero_division<span class="op">=</span><span class="dv">0</span>)),</span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>  <span class="st">"recall"</span>: <span class="bu">float</span>(recall_score(labels, preds, average<span class="op">=</span><span class="st">"weighted"</span>, zero_division<span class="op">=</span><span class="dv">0</span>)),</span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>  <span class="st">"f1"</span>: <span class="bu">float</span>(f1_score(labels, preds, average<span class="op">=</span><span class="st">"weighted"</span>, zero_division<span class="op">=</span><span class="dv">0</span>)),</span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>  <span class="st">"runtime_seconds"</span>: <span class="bu">round</span>(elapsed, <span class="dv">2</span>)</span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>(base <span class="op">/</span> <span class="st">"bert_results.json"</span>).write_text(json.dumps(bert_results, indent<span class="op">=</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wf_nb <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_bow) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">naive_Bayes</span>() <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"naivebayes"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>wf_glm <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_bow) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic_reg</span>() <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"glm"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>wf_lasso <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_bow) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic_reg</span>(<span class="at">penalty =</span> <span class="fl">0.01</span>, <span class="at">mixture =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"glmnet"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>wf_ridge <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_bow) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logistic_reg</span>(<span class="at">penalty =</span> <span class="fl">0.01</span>, <span class="at">mixture =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"glmnet"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>wf_svm <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_svm) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">svm_linear</span>() <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"LiblineaR"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>wf_rf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_bow) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>wf_xgb <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> <span class="fu">add_recipe</span>(recipe_bow) <span class="sc">|&gt;</span> <span class="fu">add_model</span>(</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boost_tree</span>(<span class="at">trees =</span> <span class="dv">50</span>) <span class="sc">|&gt;</span> <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>) <span class="sc">|&gt;</span> <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>bow_metrics <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"Naive Bayes (TF-IDF)"</span>, wf_nb),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"Logistic regression (glm)"</span>, wf_glm),</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"Lasso (glmnet)"</span>, wf_lasso),</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"Ridge (glmnet)"</span>, wf_ridge),</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"SVM linear (LiblineaR)"</span>, wf_svm),</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"Random forest (ranger)"</span>, wf_rf),</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_bow</span>(<span class="st">"XGBoost"</span>, wf_xgb)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: algorithm did not converge</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases
+Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</code></pre>
+</div>
+</div>
+</section>
+<section id="bert-python-via-reticulate" class="level3">
+<h3 class="anchored" data-anchor-id="bert-python-via-reticulate">BERT (Python via reticulate)</h3>
+<p>Fine-tuned <code>bert-base-uncased</code> on 500 samples. Writes metrics to <code>bert_results.json</code> for the R chunk below.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use reticulate to call the BERT training script in the bert-env conda environment.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">use_condaenv</span>(<span class="st">"bert-env"</span>, <span class="at">required =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source_python</span>(<span class="fu">here</span>(base, <span class="st">"run_bert.py"</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># run_bert.py defines main() which trains BERT and writes bert_results.json</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">main</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
 <section id="bert-metrics-and-llm-zero-shot" class="level3">
 <h3 class="anchored" data-anchor-id="bert-metrics-and-llm-zero-shot">BERT metrics and LLM zero-shot</h3>
-<pre class="{r}"><code>#| label: bert-llm
-
-bert_metrics &lt;- jsonlite::read_json(here(base, "bert_results.json")) |&gt;
-  as.list() |&gt;
-  as_tibble() |&gt;
-  mutate(classifier = "BERT (fine-tuned)", .before = 1)
-
-needs(ellmer, ollamar)
-n_gpt &lt;- 100
-imdb_test_gpt &lt;- imdb_test |&gt; slice_head(n = n_gpt)
-sentiment_type &lt;- ellmer::type_object(
-  sentiment = ellmer::type_enum("Sentiment", values = c("positive", "negative"))
-)
-prompt &lt;- "You are a movie expert. Classify the review as positive or negative. Reply with one word: positive or negative."
-
-tic("LLM zero-shot")
-gpt_preds &lt;- map(imdb_test_gpt$text, function(txt) {
-  ch &lt;- ellmer::chat_ollama(model = "qwen2.5:3b", system_prompt = prompt,
-    params = ellmer::params(temperature = 0.1, seed = 42))
-  as.character(ch$chat_structured(txt, type = sentiment_type)$sentiment)
-}, .progress = TRUE)
-gpt_time &lt;- toc(quiet = TRUE)
-
-gpt_df &lt;- imdb_test_gpt |&gt;
-  select(sentiment) |&gt;
-  mutate(
-    .pred_class = factor(unlist(gpt_preds), levels = c("positive", "negative")),
-    sentiment = factor(sentiment, levels = c("positive", "negative"))
-  )
-gpt_metrics &lt;- gpt_df |&gt;
-  metric_set(accuracy, precision, recall, f_meas)(
-    truth = sentiment,
-    estimate = .pred_class,
-    event_level = "second"
-  ) |&gt;
-  pivot_wider(names_from = .metric, values_from = .estimate) |&gt;
-  mutate(
-    classifier = paste0("LLM zero-shot (n=", n_gpt, ")"),
-    runtime_seconds = round(gpt_time, 2),
-    .before = 1
-  ) |&gt;
-  rename(f1 = f_meas) |&gt;
-  select(classifier, accuracy, precision, recall, f1, runtime_seconds)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bert_metrics <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">read_json</span>(<span class="fu">here</span>(base, <span class="st">"bert_results.json"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.list</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">classifier =</span> <span class="st">"BERT (fine-tuned)"</span>, <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">needs</span>(ellmer, ollamar)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>n_gpt <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>imdb_test_gpt <span class="ot">&lt;-</span> imdb_test <span class="sc">|&gt;</span> <span class="fu">slice_head</span>(<span class="at">n =</span> n_gpt)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>sentiment_type <span class="ot">&lt;-</span> ellmer<span class="sc">::</span><span class="fu">type_object</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">sentiment =</span> ellmer<span class="sc">::</span><span class="fu">type_enum</span>(<span class="st">"Sentiment"</span>, <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"positive"</span>, <span class="st">"negative"</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>prompt <span class="ot">&lt;-</span> <span class="st">"You are a movie expert. Classify the review as positive or negative. Reply with one word: positive or negative."</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>(<span class="st">"LLM zero-shot"</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>gpt_preds <span class="ot">&lt;-</span> <span class="fu">map</span>(imdb_test_gpt<span class="sc">$</span>text, <span class="cf">function</span>(txt) {</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  ch <span class="ot">&lt;-</span> ellmer<span class="sc">::</span><span class="fu">chat_ollama</span>(<span class="at">model =</span> <span class="st">"qwen2.5:3b"</span>, <span class="at">system_prompt =</span> prompt,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">params =</span> ellmer<span class="sc">::</span><span class="fu">params</span>(<span class="at">temperature =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">42</span>))</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.character</span>(ch<span class="sc">$</span><span class="fu">chat_structured</span>(txt, <span class="at">type =</span> sentiment_type)<span class="sc">$</span>sentiment)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>}, <span class="at">.progress =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■                                  1% |  ETA:  7m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■                                 2% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■                                 3% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■                                 4% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■                                5% |  ETA: 11m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■                                6% |  ETA: 11m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■                                7% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■                                8% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■                               9% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■                              10% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■                              11% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■                             12% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■                             13% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■                             14% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■                             15% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■                            16% |  ETA: 12m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■                           19% |  ETA: 11m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■                           20% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■                           21% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■                          22% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■                          23% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■                          24% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■                         25% |  ETA: 10m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■                         27% |  ETA:  9m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■                        30% |  ETA:  8m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■                       32% |  ETA:  7m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■                       34% |  ETA:  7m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■                      36% |  ETA:  6m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■                      38% |  ETA:  6m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■                     41% |  ETA:  5m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■                    44% |  ETA:  5m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■                   46% |  ETA:  4m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■                  49% |  ETA:  4m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■                  51% |  ETA:  4m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■                 53% |  ETA:  3m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■                56% |  ETA:  3m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■               59% |  ETA:  3m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■               60% |  ETA:  3m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■              64% |  ETA:  2m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA:  2m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA:  2m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA:  2m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA:  1m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA:  1m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  1m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  1m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA: 48s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA: 37s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA: 31s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA: 21s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA: 12s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  6s</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>gpt_time <span class="ot">&lt;-</span> <span class="fu">toc</span>(<span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>gpt_elapsed <span class="ot">&lt;-</span> gpt_time<span class="sc">$</span>toc<span class="sc">-</span>gpt_time<span class="sc">$</span>tic</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>gpt_df <span class="ot">&lt;-</span> imdb_test_gpt <span class="sc">|&gt;</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sentiment) <span class="sc">|&gt;</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.pred_class =</span> <span class="fu">factor</span>(<span class="fu">unlist</span>(gpt_preds), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"positive"</span>, <span class="st">"negative"</span>)),</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sentiment =</span> <span class="fu">factor</span>(sentiment, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"positive"</span>, <span class="st">"negative"</span>))</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>gpt_metrics <span class="ot">&lt;-</span> gpt_df <span class="sc">|&gt;</span></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">metric_set</span>(accuracy, precision, recall, f_meas)(</span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">truth =</span> sentiment,</span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> .pred_class,</span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">event_level =</span> <span class="st">"second"</span></span>
+<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate) <span class="sc">|&gt;</span></span>
+<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">classifier =</span> <span class="fu">paste0</span>(<span class="st">"LLM zero-shot (n="</span>, n_gpt, <span class="st">")"</span>),</span>
+<span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">runtime_seconds =</span> <span class="fu">round</span>(gpt_elapsed, <span class="dv">2</span>),</span>
+<span id="cb61-20"><a href="#cb61-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.before =</span> <span class="dv">1</span></span>
+<span id="cb61-21"><a href="#cb61-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">f1 =</span> f_meas) <span class="sc">|&gt;</span></span>
+<span id="cb61-23"><a href="#cb61-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(classifier, accuracy, precision, recall, f1, runtime_seconds)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
-<pre class="{r}"><code>#| label: results
-#| tbl-cap: "Accuracy, precision, recall, F1, and runtime per classifier. Train size 500 (LLM zero-shot)."
-
-results &lt;- bind_rows(dict_metrics, bow_metrics, bert_metrics, gpt_metrics)
-results</code></pre>
+<div class="cell" data-tbl-cap="Accuracy, precision, recall, F1, and runtime per classifier. Train size 500 (LLM zero-shot).">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(dict_metrics, bow_metrics, bert_metrics, gpt_metrics)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 6
+   classifier                accuracy precision recall    f1 runtime_seconds
+   &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;           &lt;dbl&gt;
+ 1 Dictionary (AFINN)           0.664     0.761  0.477 0.586            9.59
+ 2 Naive Bayes (TF-IDF)         0.569     0.540  0.942 0.686           11.8 
+ 3 Logistic regression (glm)    0.512     0.512  0.504 0.508           33.6 
+ 4 Lasso (glmnet)               0.765     0.779  0.740 0.759            5.59
+ 5 Ridge (glmnet)               0.785     0.791  0.775 0.783            5.55
+ 6 SVM linear (LiblineaR)       0.744     0.741  0.748 0.745            5.6 
+ 7 Random forest (ranger)       0.766     0.777  0.747 0.762            8.24
+ 8 XGBoost                      0.710     0.721  0.683 0.702            6.02
+ 9 BERT (fine-tuned)            0.823     0.826  0.823 0.822          953.  
+10 LLM zero-shot (n=100)        0.95      0.965  0.948 0.957          288.  </code></pre>
+</div>
+</div>
 </section>
 <section id="conclusions" class="level2">
 <h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
-<p>Stemming and token filtering improve dictionary and bag-of-words baselines. With 500 examples, TF-IDF + penalized regression or tree models outperform the dictionary; BERT reaches highest accuracy at higher compute cost. The zero-shot LLM (Qwen 2.5 3B) performs well without training and is flexible—change the prompt instead of retraining. Use dictionary or Naive Bayes for quick baselines; BERT when you have labels and GPU; LLM prompting when labels are scarce or categories change often.</p>
+<p>Stemming and token filtering improve dictionary and bag-of-words baselines. With 500 examples, TF-IDF + penalized regression or tree models outperform the dictionary; BERT reaches highest accuracy at higher compute cost. The zero-shot LLM (Qwen 2.5 3B) performs well without training and is flexible—change the prompt instead of retraining. In a more production-like setting, additional tuning steps would be natural: grid-searching penalties and token thresholds for bag-of-words models, adjusting BERT epochs and learning rates, or iterating on prompt design and few-shot examples for the LLM. As a rule of thumb, use dictionary or Naive Bayes for very quick baselines, tuned penalized/logit or tree models when you need strong performance on limited compute, BERT when you have labels and GPU time, and LLM prompting when labels are scarce or categories change frequently.</p>
 
 
 </section>

@@ -1,5 +1,6 @@
 ---
 title: "How The Media Can Shape Ideological Polarization"
+freeze: true
 ---
 
 A commonly employed definition of ideological polarization is one of "political alignment" -- Republicans despise immigration and love guns, Liberals are united in their views on climate change and social equality. We experience this in our everyday lives in political discussions with peers and when reading the news. In my dissertation research, I was wondering: where do these alignments in public opinion stem from? Especially in Europe, where news coverage tends to be less overtly partisan than in the U.S. Put differently, the question this project aimed to answer is: how do people learn "which views go together"?

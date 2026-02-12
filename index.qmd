@@ -1,5 +1,6 @@
 ---
 title: "Felix Lennert"
+freeze: true
 ---
 
 ![](/files/me.png){width=300px fig-align="center"}

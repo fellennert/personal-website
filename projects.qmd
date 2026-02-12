@@ -1,5 +1,6 @@
 ---
 title: "Projects"
+freeze: true
 ---
 
 This section is where theory meets practice. Each project here represents a different slice of what I bring to data work: collecting messy data from the web, building and comparing machine learning models, applying cutting-edge NLP techniques, and making complex methods accessible to others. These are **educational reports and dashboards** to showcase approach and results—not production applications—and **underlying data are not shared**; the focus is on methodology, visualizations, and insights.
@@ -8,12 +9,8 @@ You'll see a mix of techniques: classic machine learning, modern transformer mod
 
 ### What we can learn about runners from Strava
 
-I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there's no statistically significant evidence that shoe brand affects how hard you work during a marathon. [READ MORE](./projects/boston_marathon_procrastination.qmd)
+I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there's no statistically significant evidence that shoe brand affects how hard you work during a marathon. [READ MORE](./projects/boston_marathon_data/boston_marathon_procrastination.qmd)
 
-### Data science job market: Hiring Cafe
+### A local RAG assistant for teaching materials
 
-I scraped and analyzed job listings for data science roles from Hiring Cafe to explore compensation patterns, workplace types, required skills, and what drives applicant interest. The report covers salary distributions by sector and seniority, geographic variation, and a regression model for salary prediction—all with clear, educational visualizations. [READ MORE](./projects/hiring_cafe/data-science-field.qmd)
-
-### Training and comparing ML classifiers
-
-For a graduate Computational Social Science course, I compared different approaches to supervised text classification: dictionary-based (AFINN), bag-of-words (Naive Bayes with TF–IDF), fine-tuned BERT, and zero-shot prompting with a local LLM. Using 500 training examples from the IMDb reviews data set, the project highlights how preprocessing and model choice affect accuracy, precision, recall, F1, and runtime—with BERT and the LLM offering the best performance at higher compute cost. [READ MORE](./projects/ml_classifiers.qmd)
+To help students navigate a semester’s worth of Computational Social Science materials -- i.e., lecture notes and topic-specific notebooks -- I built a Retrieval-Augmented Generation (RAG) system that answers questions strictly based on the course resources. Using the `ragnar` package in R, I convert documents to markdown, chunk them along headings, and store them in a DuckDB-backed vector index with embeddings from a local `nomic-embed-text` model. Students can then ask questions and get answers based on the course resources using either a local Ollama model (`qwen2.5:3b`) or the Claude API (granted they locally provide an Anthropic API key or set it as an environment variable). To make interactions more natural, I implemented this chatbot in a simple RShiny app with a conversational UI. The R package runs fully locally, comes with my teaching materials pre-installed and is available on [GitHub](https://github.com/fellennert/teachrag). Further, options to use your own materials are provided (this functionality is still experimental and may not work for all use cases). [READ MORE](./projects/teaching_rag/teachrag.qmd)
