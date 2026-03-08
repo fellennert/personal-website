@@ -55,6 +55,7 @@ teachrag::ensure_dependencies()
 ```
 
 Before first use, ensure you have [Ollama](https://ollama.com/) installed with `qwen2.5:3b` and `nomic-embed-text` pulled, or `ANTHROPIC_API_KEY` set if you prefer Claude (in the latter case you will still need Ollama and `nomic-embed-text` for the embeddings; you can also use the Shiny app to set up the API key).
+
 ### Asking questions
 
 Once installed, you can query the course materials in several ways. All of these show progress: **Querying database…** → **Producing initial answer…** → **Fact-checking answer…**
@@ -116,6 +117,7 @@ As you can see, the CLI is a bit more limited in its functionality. You can ask 
 ### Architecture
 
 My goal was to create a system that is:
+
 - easy to use for students and instructors
 - easy to extend to other courses and materials
 - easy to maintain and update

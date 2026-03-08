@@ -11,6 +11,7 @@
 *.csv
 *.pkl
 *.md
+!README.md
 
 # Project planning (not for repo)
 instructions.md
