@@ -175,18 +175,18 @@
     "text": "Professional Summary\nI am a quantitative researcher and analyst with a Ph.D. in Computational Social Science and seven years of applied experience across academic, consulting, and industry contexts. My work combines rigorous statistical methodology – causal inference, NLP, and machine learning – with practical problem-solving for clients in education, research, and industry. I have delivered analytical projects ranging from organizational performance dashboards to multilingual NLP classification pipelines, consistently translating complex findings into clear recommendations for decision-makers. With cross-cultural experience across Europe and the United States, I bring both methodological depth and effective communication to every engagement."
   },
   {
-    "objectID": "about.html#education",
-    "href": "about.html#education",
-    "title": "About",
-    "section": "Education",
-    "text": "Education\nPh.D. in Sociology · ENSAE, Institut Polytechnique de Paris · 2026\nDissertation: computational analysis of ideological, affective, and lifestyle polarization across France, Germany, and Sweden. Visiting Scholar, Duke University (2024, 2025).\nM.Sc. in Computational Social Science · Linköping University · 2021\nB.A. in Political Science · University of Regensburg · 2019"
-  },
-  {
     "objectID": "about.html#selected-experience",
     "href": "about.html#selected-experience",
     "title": "About",
     "section": "Selected Experience",
     "text": "Selected Experience\n\nFreelance Data Science Consultant | Boston, MA | 2024–present\nProviding analytical consulting services to domestic and international clients in education, survey research, and industry.\nEngagement 1 – Organizational Performance & Growth Strategy\nConducted performance analytics for a U.S.-based professional education company. Developed interactive dashboards to identify underperforming course offerings, informing strategic portfolio restructuring. Designed data-driven marketing campaigns using social media and web analytics that increased enrollment. Delivered AI-focused curriculum strategy resulting in five new course offerings.\nEngagement 2 – Multilingual Survey Analytics\nDesigned and implemented NLP classification pipelines for open-ended survey responses across four languages for a Scandinavian research institution. Validated automated classifications against expert-coded benchmarks, achieving human-level accuracy (F1: 0.91–0.98). Co-authored two manuscripts currently under peer review. Delivered reproducible analysis code and publication-ready visualizations.\nEngagement 3 – Industrial Sector Classification & Market Intelligence\nDeveloped an LLM-based classification pipeline for a European client to categorize companies by industrial sector and verify ISO certifications. Implemented quality-control workflows combining regex-based filtering, LLM classification, and manual validation. Delivered a clean, structured database ready for client decision-making.\n\n\n\nUniversity Lecturer | Leipzig University & University of Regensburg | 2018–2026\nDesigned and delivered 17 courses on data science methods – including web scraping, NLP, machine learning, and statistical modeling in R and Python – to 500+ students at senior and master level. Co-supervised 10+ Bachelor’s and 3 Master’s theses. See Teaching Materials for full course list.\n\n\n\nData Analyst | Linköping University | 2020–2021\nProvided research support for publications in Nature Human Behavior and Science Advances, including large-scale text data collection (80M+ forum posts) and machine learning analysis in R and Python."
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "Education",
+    "text": "Education\nPh.D. in Sociology · ENSAE, Institut Polytechnique de Paris · 2026\nDissertation: computational analysis of ideological, affective, and lifestyle polarization across France, Germany, and Sweden. Visiting Scholar, Duke University (2024, 2025).\nM.Sc. in Computational Social Science · Linköping University · 2021\nB.A. in Political Science · University of Regensburg · 2019"
   },
   {
     "objectID": "about.html#technical-skills",
