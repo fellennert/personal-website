@@ -1,0 +1,13 @@
+---
+title: "CV"
+freeze: true
+toc: false
+---
+
+A PDF version of my current curriculum vitae is available for download below. For a full professional profile – including experience, education, and technical skills – see the [About](about.qmd) page.
+
+<br>
+
+<a href="files/felix_lennert-resume.pdf" class="btn btn-primary" role="button" download>
+  Download CV (PDF)
+</a>

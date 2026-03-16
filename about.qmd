@@ -1,90 +1,76 @@
 ---
-title: "About Me"
+title: "About"
 execute:
   enabled: false
 freeze: true
 ---
 
-
-I'm Felix, a final-year Ph.D. student in Sociology at the Ecole Polytechnique in Paris, currently living in Boston with my partner and two cats. I'm a German citizen with a valid U.S. work permit.
-
-I hold a Bachelor of Arts degree in Political Science (University of Regensburg), a Master of Science in Computational Social Science from Linköping University, and will defend my Ph.D. in Sociology at the Ecole Polytechnique in Paris on March 4, 2026. During my Ph.D., I also spent two Spring terms as a visiting scholar at Duke University.
-
-## Contact
-
-You can find my CV below. For collaboration or opportunities, reach out via [email](mailto:felix.lennert@icloud.com) or [LinkedIn](https://www.linkedin.com/in/felix-lennert/).
+[felix@felixlennert.xyz](mailto:felix@felixlennert.xyz) · [LinkedIn](https://www.linkedin.com/in/felix-lennert/) · [Download CV (PDF)](files/felix_lennert-resume.pdf)
 
 ---
 
-## Summary
+## Professional Summary
 
-Early-career Data Scientist with hands-on experience applying machine learning, NLP, causal inference, and statistical modeling to real-world, data-heavy problems. Experienced in owning end-to-end analysis, working with ambiguous datasets, and translating business and product questions into reproducible, actionable insights across Python, SQL, and R. 
+I am a quantitative researcher and analyst with a Ph.D. in Computational Social Science and seven years of applied experience across academic, consulting, and industry contexts. My work combines rigorous statistical methodology – causal inference, NLP, and machine learning – with practical problem-solving for clients in education, research, and industry. I have delivered analytical projects ranging from organizational performance dashboards to multilingual NLP classification pipelines, consistently translating complex findings into clear recommendations for decision-makers. With cross-cultural experience across Europe and the United States, I bring both methodological depth and effective communication to every engagement.
 
-## Technical Skills
-
-- **Languages & Tools:** Python (pandas, scikit-learn, transformers, numpy, langchain), SQL, R (tidyverse, ggplot2, RShiny), MS Excel
-- **Machine Learning & Analytics:** NLP, text classification, SpaCy, clustering, forecasting, A/B testing, regression
-- **Causal Inference:** Difference-in-differences, synthetic control, propensity score matching
-- **Data Practices:** Agentic workflows (cursor), dashboarding (RShiny, PowerBI, Looker, Tableau), version control (git), web scraping
-
-
-## Work Experience
-
-*(ordered by start date, most recent first)*
-
-### University of Oslo | Data Scientist (Contract)
-*Oslo, Norway (remote) · Feb 2025 - Jan 2026*
-
-- Developed and implemented analysis pipelines for open-ended survey responses in 4 different languages using local LLMs and sBERT-based clustering in Python and R. 
-- Validated output against human-coded responses, achieving human-like accuracy (F1: 0.91-0.98). 
-- Co-authored 2 publications that are under review at peer-reviewed journals.
--Delivered publication-ready visualizations and code for reproducibility.
-
-### Statistical Horizons | Consulting Data Analyst
-*Philadelphia, PA (remote) · Oct 2024 - Aug 2025*
-
-- Developed AI-focused curriculum, yielding 5 new AI-focused courses. 
-- Created interactive RShiny dashboards for data-driven decision making to identify and cut under-performing course offerings. 
-- Increased enrolment by developing targeted advertising campaigns using social media analytics and Google Analytics.
-
-### Leipzig University | Lecturer
-*Leipzig, Germany (hybrid) · Oct 2021 - Jan 2026*
-
-- Developed and taught 10 courses on data science methods including web scraping, NLP, and machine learning in R and Python(senior and master level). 
-- Co-supervised 10+ Bachelor's and 3 Master's theses.
-
-### Linköping University | Data Analyst
-*Norrköping, Sweden (hybrid) · Feb 2020 - Jun 2021*
-
-- Analyzed large text datasets using machine learning classifiers in R and Python. 
-- Web scraped 80+ million forum postings used in 3 academic publications and training of a Swedish LLM, using R, SQL, and Python. 
-- Assisted in research articles for *Nature Human Behavior* and *Science Advances*.
-
-### University of Regensburg | Lecturer
-*Regensburg, Germany (hybrid) · Dec 2018 - Jun 2021*
-
-- Taught 7 senior and master-level courses on social network analysis, data wrangling, visualization, and statistical modeling in R.
+---
 
 ## Education
 
-### Ph.D. in Sociology | École Polytechnique
-*Paris, France · Sep 2021 - Mar 2026*
+**Ph.D. in Sociology** · ENSAE, Institut Polytechnique de Paris · 2026  
+Dissertation: computational analysis of ideological, affective, and lifestyle polarization across France, Germany, and Sweden. Visiting Scholar, Duke University (2024, 2025).
 
-- Specialized in computational methods for digital behavioral data analysis. 
-- Co-authored 5 academic papers (currently under review at peer-reviewed journals)
-- Presented at 10+ international conferences
-- Co-organized 2 [Summer Institutes in Computational Social Science](https://sicss.io/).
+**M.Sc. in Computational Social Science** · Linköping University · 2021
 
-### M.Sc. in Computational Social Science | Linköping University
-*Norrköping, Sweden · Aug 2019 - Jul 2021*
+**B.A. in Political Science** · University of Regensburg · 2019
 
-### B.A. in Political Science | University of Regensburg
-*Regensburg, Germany · Oct 2014 - Mar 2019*
+---
 
-## Additional Information
+## Selected Experience
 
-**Work Authorization:** Valid work permit for the United States; authorized to work in EU (German citizen)
+### Freelance Data Science Consultant | Boston, MA | 2024–present
 
-**Awards:** Ph.D. scholarship from École Polytechnique, 2 travel grants from French National Scientific Center and German Academy for Sociology to visit Duke University (Durham, NC) in 2024 and 2025.
+*Providing analytical consulting services to domestic and international clients in education, survey research, and industry.*
 
-**Languages:** German (native), English (C2), French (A2)
+**Engagement 1 – Organizational Performance & Growth Strategy**  
+Conducted performance analytics for a U.S.-based professional education company. Developed interactive dashboards to identify underperforming course offerings, informing strategic portfolio restructuring. Designed data-driven marketing campaigns using social media and web analytics that increased enrollment. Delivered AI-focused curriculum strategy resulting in five new course offerings.
+
+**Engagement 2 – Multilingual Survey Analytics**  
+Designed and implemented NLP classification pipelines for open-ended survey responses across four languages for a Scandinavian research institution. Validated automated classifications against expert-coded benchmarks, achieving human-level accuracy (F1: 0.91–0.98). Co-authored two manuscripts currently under peer review. Delivered reproducible analysis code and publication-ready visualizations.
+
+**Engagement 3 – Industrial Sector Classification & Market Intelligence**  
+Developed an LLM-based classification pipeline for a European client to categorize companies by industrial sector and verify ISO certifications. Implemented quality-control workflows combining regex-based filtering, LLM classification, and manual validation. Delivered a clean, structured database ready for client decision-making.
+
+---
+
+### University Lecturer | Leipzig University & University of Regensburg | 2018–2026
+
+Designed and delivered 17 courses on data science methods – including web scraping, NLP, machine learning, and statistical modeling in R and Python – to 500+ students at senior and master level. Co-supervised 10+ Bachelor's and 3 Master's theses. See [Teaching Materials](teaching.qmd) for full course list.
+
+---
+
+### Data Analyst | Linköping University | 2020–2021
+
+Provided research support for publications in *Nature Human Behavior* and *Science Advances*, including large-scale text data collection (80M+ forum posts) and machine learning analysis in R and Python.
+
+---
+
+## Technical Skills
+
+**Quantitative Analysis:** causal inference (DiD, synthetic control, PSM), econometrics, regression modeling, A/B testing, Bayesian methods
+
+**Machine Learning & NLP:** text classification, clustering, transformer models (sBERT, HuggingFace), LLM pipelines (LangChain, Ollama, Anthropic API)
+
+**Programming:** Python (pandas, scikit-learn, transformers, numpy), R (tidyverse, ggplot2, RShiny), SQL
+
+**Communication & Dashboarding:** RShiny, PowerBI, Tableau, Looker, reproducible reporting, technical writing
+
+---
+
+## Work Authorization & Languages
+
+**Work Authorization:** U.S. Permanent Resident; authorized to work in EU (German citizen)
+
+**Awards:** Ph.D. scholarship, ENSAE; travel grants from the French National Scientific Center and German Academy for Sociology (Duke University, 2024 & 2025)
+
+**Languages:** German (native), English (C2)

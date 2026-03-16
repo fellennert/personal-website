@@ -1,20 +1,77 @@
 ---
-title: "Felix Lennert"
+title: "Felix Lennert, Ph.D."
 freeze: true
+toc: false
 ---
 
-![](/files/me.png){width=300px fig-align="center"}
+::: {.columns}
+::: {.column width="25%"}
+![](/files/me.png){width=220px style="border-radius: 6px;"}
+:::
+::: {.column width="5%"}
+:::
+::: {.column width="70%"}
 
-I'm Felix, and this is my personal website. I am a final-year Ph.D. student in Sociology at the Ecole Polytechnique in Paris. I live in Boston with my partner (who is doing her Ph.D. in Sociology, too) and two gorgeous cats. I am a German citizen and have a valid work permit for the U.S.
+I am a computational social scientist based in Boston, MA, with expertise in quantitative methods, causal inference, and applied NLP. I hold a Ph.D. from ENSAE, Institut Polytechnique de Paris (2026) and specialize in translating complex analytical findings into clear, actionable insights for decision-makers. My work spans consumer behavior, market analysis, political attitudes, and organizational performance – combining the methodological rigor of academic research with the practical orientation of applied consulting.
 
-I spent years doing research in the field of cultural and political sociology, asking big questions about human behavior and waiting even longer for answers. This career gave me great opportunities: I lived in Germany, Sweden, France, and the U.S., I met great and interesting people, and learned a lot. However, between endless research timelines, publishing and revision cycles, and the slow churn of academic life, I also realized that I was craving something different: the chance to see my work make an impact more immediately and directly. Who cares about a ten-page journal article that gets 1,000 downloads and maybe influences a few other researchers if it doesn't change anything in the real world?
+I am currently seeking roles in economic consulting, analytics, and data science where quantitative depth and communication clarity are equally valued.
 
-The closest you can get to experiencing impact in academia is through teaching and conference visits. I have been teaching younger folks how to go after social science questions in R and Python throughout my entire academic career (starting right after graduating from my Bachelor's program) and also attended and presented at more than 10 academic conferences. These occasions showed me what I love most about this work: solving problems and telling stories with data. There is nothing I enjoy more than the moment when a visualization clicks, when a pattern emerges from messy data, when numbers suddenly tell a story that changes how someone sees a problem. I want to do that outside the university, with data that's as exciting and dynamic as the questions it can answer.
+:::
+:::
 
-That desire for real-world impact led me to work as a consulting analyst for Statistical Horizons, where I got my first taste of what data work looks like outside academia. I crunched performance data for reports and dashboards to detect underperforming courses, prepared marketing campaigns using customer data that I collected online that led to new enrolments, and created reports that led to 5 new course offerings, making an immediate and measurable impact. It confirmed what I suspected: I want to do this full-time.
+---
 
-So I am looking for data analyst and data science roles where I can combine rigorous methodology with practical problem-solving. Where I can dive into rich datasets, uncover insights that actually shift decisions, and communicate findings in ways that resonate with and help the people who need them.
+## Areas of Expertise
 
-This portfolio is a glimpse of how I work -- curious, methodical, sometimes a bit outside the box, but always driven by a desire to understand and explain. If you like what you see here, please reach out via [email](mailto:felix.lennert@icloud.com). I would love to connect and explore how I can bring this approach to your team.
+::: {.columns}
+::: {.column width="48%"}
 
+**Causal Inference & Econometrics**
 
+Applying difference-in-differences, synthetic control, propensity score matching, and regression modeling to isolate treatment effects and support evidence-based decision-making in complex, observational settings.
+
+:::
+::: {.column width="4%"}
+:::
+::: {.column width="48%"}
+
+**NLP & Text Analytics**
+
+Designing and deploying text classification pipelines, topic models, transformer-based embeddings, and LLM-integrated workflows to extract structured insight from large-scale unstructured data across multiple languages.
+
+:::
+:::
+
+::: {.columns}
+::: {.column width="48%"}
+
+**Survey Methodology & Consumer Research**
+
+Designing surveys and automated response classification systems for cross-national research. Validating automated coding against expert benchmarks and delivering reproducible, publication-ready analyses.
+
+:::
+::: {.column width="4%"}
+:::
+::: {.column width="48%"}
+
+**Data Strategy & Communication**
+
+Building interactive dashboards, reproducible analysis pipelines, and stakeholder-ready reporting to support data-driven decisions in research, educational, and commercial contexts.
+
+:::
+:::
+
+---
+
+## Recent Work
+
+- Completed doctoral research on ideological, affective, and lifestyle polarization across France, Germany, and Sweden using large-scale computational methods – resulting in five peer-reviewed manuscripts currently under review.
+- Providing freelance analytical consulting to domestic and international clients in education, survey research, and industry – including NLP pipeline development, performance analytics, and LLM-based classification systems.
+
+---
+
+## Contact
+
+Based in Boston, MA · U.S. Permanent Resident · German Citizen
+
+[felix@felixlennert.xyz](mailto:felix@felixlennert.xyz) · [LinkedIn](https://www.linkedin.com/in/felix-lennert/) · [GitHub](https://github.com/fellennert)

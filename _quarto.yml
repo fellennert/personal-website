@@ -12,13 +12,13 @@ website:
       - href: index.qmd
         text: Home
       - href: about.qmd
-        text: About Me
-      - href: projects.qmd
-        text: Coding Projects
+        text: About
+      - href: work.qmd
+        text: Selected Work
       - href: research.qmd
-        text: Research Output
-      - href: teaching.qmd
-        text: Teaching Materials
+        text: Publications
+      - href: cv.qmd
+        text: CV
 
 format:
   html:
