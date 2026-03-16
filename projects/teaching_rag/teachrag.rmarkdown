@@ -143,3 +143,4 @@ To achieve this, I implemented the following steps:
 ## Summary
 
 This project turns a semester's worth of teaching materials into a focused RAG system. The `teachrag` package ships with pre-built course data, so students can install it, check dependencies, and start asking questions immediately – via single-turn Q&A, multi-turn chat, a Shiny app, or the CLI. Answers are grounded in the course materials and fact-checked against the syllabus. The system is intentionally modest: it does not try to be a general-purpose assistant, but rather a guided search and explanation tool over a well-defined corpus. The code is available as an R package on [GitHub](https://github.com/fellennert/teachrag).
+

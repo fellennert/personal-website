@@ -3,7 +3,7 @@ title: "Projects"
 freeze: true
 ---
 
-This section is where theory meets practice. Each project here represents a different slice of what I bring to data work: collecting messy data from the web, building and comparing machine learning models, applying cutting-edge NLP techniques, and making complex methods accessible to others. These are **educational reports and dashboards** to showcase approach and results—not production applications—and **underlying data are not shared**; the focus is on methodology, visualizations, and insights.
+This section is where theory meets practice. Each project here represents a different slice of what I bring to data work: collecting messy data from the web, building and comparing machine learning models, applying cutting-edge NLP techniques, and making complex methods accessible to others. These are **educational reports and dashboards** to showcase approach and results–not production applications–and **underlying data are not shared**; the focus is on methodology, visualizations, and insights.
 
 You'll see a mix of techniques: classic machine learning, modern transformer models, web scraping, and interactive visualizations. The thread that runs through all of them is the same: turning raw data into understandable insights that people can actually use.
 

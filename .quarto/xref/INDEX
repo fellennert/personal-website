@@ -58,5 +58,11 @@
   },
   "projects/boston_marathon_data/boston_marathon_procrastination.qmd": {
     "boston_marathon_procrastination.html": "e523a2e4"
+  },
+  "cv.qmd": {
+    "cv.html": "dade7986"
+  },
+  "work.qmd": {
+    "work.html": "6e6dcf84"
   }
 }

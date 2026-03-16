@@ -47,7 +47,7 @@ The following case studies represent a sample of applied analytical work across 
 
 ### RAG-Based Course Assistant for Higher Education
 
-**Context:** Students navigating large volumes of course materials — lecture notes, readings, notebooks — face a common challenge: finding relevant content quickly without re-reading everything. The same problem applies broadly across higher education, wherever instructors maintain substantial document repositories that students are expected to query and synthesize.
+**Context:** Students navigating large volumes of course materials – lecture notes, readings, notebooks – face a common challenge: finding relevant content quickly without re-reading everything. The same problem applies broadly across higher education, wherever instructors maintain substantial document repositories that students are expected to query and synthesize.
 
 **Approach:** Designed and developed `teachrag`, an R package implementing a Retrieval-Augmented Generation (RAG) system that enables natural-language querying of course materials. The system converts documents to markdown, chunks them along headings, and indexes them in a DuckDB-backed vector store using local embeddings. A conversational RShiny interface allows students to ask questions and receive answers grounded strictly in course content, via either a local Ollama model or the Anthropic Claude API. The package ships with my own teaching materials pre-installed and supports custom document ingestion, making it readily adaptable by other instructors.
 

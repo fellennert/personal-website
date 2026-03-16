@@ -30,7 +30,7 @@ We started with fully inductive exploration (79 topics), then used theory-inform
 
 **The categories vary systematically.** Swedes emphasized education comparisons; Germans focused on freedom and lifestyle; women highlighted education and family while men emphasized income; upwardly mobile people mentioned education and opportunities while downwardly mobile people focused on housing and economic instability.
 
-**Emerging dimensions matter.** Family life, economic security, lifestyle/freedom, well-being, climate concerns, and social relationships all appeared as distinct categories. A person might have more education and income than their parents but still feel downwardly mobile due to housing insecurity or precarity—and our method captures that.
+**Emerging dimensions matter.** Family life, economic security, lifestyle/freedom, well-being, climate concerns, and social relationships all appeared as distinct categories. A person might have more education and income than their parents but still feel downwardly mobile due to housing insecurity or precarity–and our method captures that.
 
 ## Takeaways
 
@@ -44,6 +44,6 @@ Not all technical approaches work for all data. We needed BERTopic specifically 
 (2) they were multilingual (requiring semantic embeddings, not word matching)
 (3) we wanted both exploration and validation (benefiting from the semi-supervised workflow).
 
-For broader research applications: when you want to know what people think without constraining their responses, open-ended questions + computational text analysis + representative sampling gives you something neither purely qualitative nor purely quantitative methods can provide alone. The barrier between these traditions keeps getting lower—we should take advantage of that.
+For broader research applications: when you want to know what people think without constraining their responses, open-ended questions + computational text analysis + representative sampling gives you something neither purely qualitative nor purely quantitative methods can provide alone. The barrier between these traditions keeps getting lower–we should take advantage of that.
 
 Reality is almost always more complex than our theories predict. Sometimes our measurement can reflect that complexity.
