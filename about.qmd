@@ -15,17 +15,6 @@ I am a quantitative researcher and analyst with a Ph.D. in Computational Social 
 
 ---
 
-## Education
-
-**Ph.D. in Sociology** · ENSAE, Institut Polytechnique de Paris · 2026  
-Dissertation: computational analysis of ideological, affective, and lifestyle polarization across France, Germany, and Sweden. Visiting Scholar, Duke University (2024, 2025).
-
-**M.Sc. in Computational Social Science** · Linköping University · 2021
-
-**B.A. in Political Science** · University of Regensburg · 2019
-
----
-
 ## Selected Experience
 
 ### Freelance Data Science Consultant | Boston, MA | 2024–present
@@ -55,6 +44,17 @@ Provided research support for publications in *Nature Human Behavior* and *Scien
 
 ---
 
+## Education
+
+**Ph.D. in Sociology** · ENSAE, Institut Polytechnique de Paris · 2026  
+Dissertation: computational analysis of ideological, affective, and lifestyle polarization across France, Germany, and Sweden. Visiting Scholar, Duke University (2024, 2025).
+
+**M.Sc. in Computational Social Science** · Linköping University · 2021
+
+**B.A. in Political Science** · University of Regensburg · 2019
+
+---
+
 ## Technical Skills
 
 **Quantitative Analysis:** causal inference (DiD, synthetic control, PSM), econometrics, regression modeling, A/B testing, Bayesian methods
@@ -71,6 +71,6 @@ Provided research support for publications in *Nature Human Behavior* and *Scien
 
 **Work Authorization:** U.S. Permanent Resident; authorized to work in EU (German citizen)
 
-**Awards:** Ph.D. scholarship, ENSAE; travel grants from the French National Scientific Center and German Academy for Sociology (Duke University, 2024 & 2025)
+**Awards:** Ph.D. scholarship, École Polytechnique; travel grants from the French National Scientific Center and German Academy for Sociology (Duke University, 2024 & 2025)
 
-**Languages:** German (native), English (C2)
+**Languages:** German (native), English (C2), French (A2)
