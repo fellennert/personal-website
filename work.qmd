@@ -29,7 +29,7 @@ The following case studies represent a sample of applied analytical work across 
 
 **Methods:** Web scraping (Selenium), data wrangling, statistical hypothesis testing, data visualization
 
-[Read more →](./projects/boston_marathon_data/boston_marathon_procrastination.qmd)
+[Read more →](./projects/boston_marathon_data/boston_marathon_procrastination.qmd) · [Interactive dashboard →](./projects/boston_marathon_data/boston_marathon_dashboard.qmd)
 
 ---
 
@@ -84,3 +84,17 @@ The following case studies represent a sample of applied analytical work across 
 **Methods:** NLP skill extraction, Poisson regression, text mining, data visualization
 
 *Full write-up forthcoming.*
+
+---
+
+### Five Niches, One Market: Mapping the Data Science Job Landscape
+
+**Context:** Job titles in data science are notoriously inconsistent. Does the underlying structure — coherent role clusters with distinct skill profiles — actually exist? And if it does, do job seekers perceive and act on it?
+
+**Approach:** Two complementary analyses. *Employer side:* Extract and normalize skill requirements from 3,400+ postings via embedding-based deduplication; build a TF-IDF weighted job × skill matrix; detect communities with Louvain (best of 30 seeds); visualize with UMAP. Log-odds ratios identify the skills that *distinguish* each cluster, not just the ones that happen to be common. *Applicant side:* Treat each posting as its own data point (no title grouping), build a posting × applicant matrix, and let UMAP + HDBSCAN reveal structure from applicant behavior alone.
+
+**Result:** Five distinct niches emerge from the skill data — Life Sciences Research, Environmental & Clinical Science, Computational Science, Applied Data Science, and ML & AI Engineering. But when you look at individual postings through applicant behavior, the clusters dissolve: the dominant axis is *when* the posting went live, not what role it described. Employers have carved out niches; job seekers treat the whole landscape as one undifferentiated market.
+
+**Methods:** NLP, TF-IDF, HDBSCAN, Louvain, UMAP, log-odds, Spearman ρ, Python
+
+[Read more →](./projects/ds_jobs_mapping/ds_jobs_mapping.qmd)

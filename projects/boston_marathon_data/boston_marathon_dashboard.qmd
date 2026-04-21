@@ -1,0 +1,621 @@
+---
+title: "Boston Marathon Strava — Interactive dashboard"
+subtitle: "Gear, finish times, and relative effort (~1,000 scraped efforts, 2025)"
+format:
+  dashboard:
+    scrolling: true
+    theme:
+      - cosmo
+      - brand
+    embed-resources: false
+include-in-header:
+  text: |
+    <style>
+      /* ── Hide the site-wide navbar; the dashboard has its own nav ── */
+      body.quarto-dashboard #quarto-header > nav.navbar-expand-lg {
+        display: none !important;
+      }
+      /* Reclaim the padding-top that was reserved for the hidden navbar */
+      body.quarto-dashboard {
+        padding-top: 0 !important;
+      }
+      /* Keep the dashboard tab nav fixed at the very top */
+      body.quarto-dashboard #quarto-header {
+        top: 0 !important;
+      }
+
+      /* ── Card polish ── */
+      .quarto-dashboard .card {
+        border-radius: 0.6rem;
+        box-shadow: 0 1px 4px rgba(15,23,42,0.10);
+      }
+      .quarto-dashboard .bslib-value-box {
+        border-radius: 0.6rem;
+      }
+      /* Value box — make the icon a comfortable size */
+      .quarto-dashboard .value-box-showcase .bi {
+        font-size: 2.2rem;
+      }
+      /* Value label smaller so it fits on one line */
+      .quarto-dashboard .value-box-title {
+        font-size: 0.78rem !important;
+        opacity: 0.85;
+      }
+      .quarto-dashboard .value-box-value {
+        font-size: 1.5rem !important;
+        font-weight: 600;
+      }
+      /* Sidebar text sizing */
+      .quarto-dashboard .sidebar-content {
+        font-size: 0.88rem;
+      }
+    </style>
+execute:
+  warning: false
+  message: false
+  freeze: true
+project:
+  type: default
+  execute-dir: project
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(here)
+  library(hms)
+  library(plotly)
+  library(knitr)
+  library(MatchIt)
+  library(scales)
+  library(RColorBrewer)
+})
+
+brew_set1 <- RColorBrewer::brewer.pal(9, "Set1")
+
+# Shared plot look (ggplot → plotly)
+theme_set(
+  theme_minimal(base_size = 13) +
+    theme(
+      plot.title = element_text(face = "bold", size = rel(1.05), margin = margin(b = 6)),
+      plot.subtitle = element_text(color = "gray35", size = rel(0.92)),
+      panel.grid.major = element_line(color = "gray92"),
+      panel.grid.minor = element_blank(),
+      axis.title = element_text(color = "gray25"),
+      plot.margin = margin(8, 10, 8, 10)
+    )
+)
+
+boston_data <- read_csv(here("projects", "boston_marathon_data", "strava_results.csv"), show_col_types = FALSE) |>
+  select(-1) |>
+  distinct(date, run_data, gear, .keep_all = TRUE) |>
+  rowid_to_column("rank") |>
+  separate(
+    run_data,
+    into = c("distance", "scrap_1", "elapsed_time", "scrap_2", "pace", "scrap_3",
+             "relative_effort", "scrap_4"),
+    sep = "\n"
+  ) |>
+  separate(gear, into = c("device", "shoes"), sep = "\n") |>
+  mutate(
+    pace = pace |> str_extract("[0-9]:[0-9]{2}") |> str_c("00:", x = _) |> parse_hms(),
+    distance = distance |> str_remove(" km$") |> parse_double(),
+    relative_effort = parse_double(relative_effort),
+    elapsed_time = parse_hms(elapsed_time),
+    date = str_remove(date, "^[A-Za-z]*, ") |> parse_date(format = "%B %d, %Y")
+  ) |>
+  select(rank:distance, pace, elapsed_time, relative_effort, device, shoes) |>
+  filter(date == ymd("2025-04-21") & distance > 42)
+
+watches <- boston_data |>
+  select(rank, device) |>
+  filter(!str_detect(device, "Shoe")) |>
+  mutate(
+    watch_brand = device |> str_to_lower() |> str_extract("^[a-z]*"),
+    watch_model = device |> str_to_lower() |> str_remove("^[a-z]*") |> str_squish()
+  ) |>
+  group_by(watch_brand) |>
+  filter(n() > 5) |>
+  mutate(
+    watch_model_cat = case_when(
+      watch_brand == "garmin" ~ str_extract(watch_model, "^[\\w]*"),
+      watch_brand == "coros" ~ str_extract(watch_model, "^[a-z]*"),
+      watch_brand == "apple" & str_detect(watch_model, "ultra") ~ "watch ultra",
+      watch_brand == "apple" & str_detect(watch_model, "se\\b") ~ "watch se",
+      watch_brand == "apple" & str_detect(watch_model, "watch") ~ "watch",
+      watch_brand == "suunto" ~ str_extract(watch_model, "^[1-9a-z]*"),
+      watch_brand == "polar" ~ str_extract(watch_model, "^[1-9a-z]*"),
+      TRUE ~ NA_character_
+    )
+  )
+
+shoes <- boston_data |>
+  select(rank, shoes) |>
+  mutate(
+    shoe_km = shoes |> str_extract("\\([0-9,\\.]* km\\)") |> str_remove_all("[(),km]") |> parse_double(),
+    shoe_brand = shoes |>
+      str_remove(r"(Shoes: )") |>
+      str_remove(" \\([0-9].*$") |>
+      str_to_lower() |>
+      str_replace_all("new balance", "nb") |>
+      str_extract("^[a-z]*"),
+    shoe_model = shoes |>
+      str_remove(r"(Shoes: )") |>
+      str_remove(" \\([0-9].*$") |>
+      str_to_lower() |>
+      str_replace_all("new balance", "nb") |>
+      str_remove("^[a-z]*") |>
+      str_squish()
+  ) |>
+  filter(!str_length(shoe_brand) == 0) |>
+  filter(shoe_km < 1000) |>
+  group_by(shoe_brand) |>
+  filter(n() > 5) |>
+  ungroup()
+
+cleaned_data <- boston_data |>
+  left_join(watches) |>
+  left_join(shoes)
+
+clean_data_w_models <- cleaned_data |>
+  select(rank:relative_effort, watch_brand, watch_model_cat, shoe_brand) |>
+  left_join(
+    read_csv(here("projects", "boston_marathon_data", "boston_shoe_models.csv"), show_col_types = FALSE) |>
+      select(rank, shoe_model = model)
+  )
+
+rank_plot_df <- cleaned_data |>
+  rename(rank_first_half = rank) |>
+  arrange(elapsed_time) |>
+  rowid_to_column("rank_final") |>
+  mutate(neg_split = if_else(rank_first_half > rank_final, TRUE, FALSE))
+
+med_hours <- median(as.numeric(cleaned_data$elapsed_time), na.rm = TRUE) / 3600
+
+n_runners <- nrow(cleaned_data)
+n_shoe <- sum(!is.na(cleaned_data$shoe_brand))
+n_watch <- sum(!is.na(cleaned_data$watch_brand))
+
+total_n <- nrow(clean_data_w_models |> drop_na(shoe_brand))
+most_pop_models <- clean_data_w_models |>
+  drop_na(shoe_brand) |>
+  mutate(shoe = str_c(shoe_brand, " ", shoe_model)) |>
+  count(shoe) |>
+  group_by(shoe) |>
+  summarize(`Share (%)` = 100 * (sum(n) / total_n) |> round(2)) |>
+  slice_max(`Share (%)`, n = 10) |>
+  rename(Shoe = shoe)
+
+forerunner_tab <- cleaned_data |>
+  filter(watch_model_cat == "forerunner") |>
+  mutate(forerunner = str_extract(watch_model, "[0-9]{2,3}") |> as.integer()) |>
+  count(forerunner) |>
+  slice_max(n, n = 10)
+
+re_shoes <- cleaned_data |>
+  filter(shoe_brand %in% c("nike", "asics", "adidas", "saucony"),
+         watch_brand == "garmin") |>
+  mutate(
+    is_nike = if_else(shoe_brand == "nike", 1, 0),
+    elapsed_time_num = as.numeric(elapsed_time)
+  ) |>
+  rename(distance_run = distance)
+
+match_ok <- nrow(re_shoes) >= 20
+matched_pairs <- tibble()
+if (match_ok) {
+  ms <- tryCatch({
+    matchit(
+      is_nike ~ elapsed_time_num,
+      data = re_shoes,
+      method = "nearest",
+      distance = "glm",
+      ratio = 1,
+      caliper = 300
+    )
+  }, error = function(e) NULL)
+  if (!is.null(ms)) {
+    matched_pairs <- match.data(ms) |>
+      drop_na(relative_effort) |>
+      arrange(subclass, is_nike) |>
+      group_by(subclass) |>
+      filter(n() == 2) |>
+      select(subclass, is_nike, relative_effort) |>
+      pivot_wider(
+        names_from = is_nike,
+        values_from = relative_effort,
+        names_prefix = "re_"
+      ) |>
+      ungroup()
+  }
+}
+match_plot_ok <- nrow(matched_pairs) >= 5
+match_mean_diff <- if (match_plot_ok) mean(matched_pairs$re_1 - matched_pairs$re_0, na.rm = TRUE) else NA_real_
+```
+
+# {.sidebar}
+
+**What this is.** Peak thesis-avoidance turned into a dashboard: ~1,000 Strava activities from runners who hit the first-half Boston segment fastest — scraped for gear (watch, shoes), finish time, and Strava Relative Effort.
+
+**How it was collected.** Segment [12666537](https://www.strava.com/segments/12666537) on Strava; Selenium for pagination and activity pages. Full marathon distance and 2025 race date filters keep finishers only. This is a **fast, non-representative** slice of the field.
+
+**Caveats.** RE mixes heart-rate zones and subjective perceived exertion; shoe text is user-entered; HR accuracy varies by watch. **Selection bias:** this sample is the fastest ~1k on the first-half segment, not a random draw from all Boston finishers.
+
+[← Long-form article](boston_marathon_procrastination.qmd) · [Selected work](../../work.qmd)
+
+# Performance
+
+## Row {height=160px}
+
+### Column {width="33.33%"}
+
+```{r}
+#| content: valuebox
+#| title: "Runners (full marathon, 2025)"
+list(
+  icon = "people-fill",
+  color = "primary",
+  value = scales::comma(n_runners)
+)
+```
+
+### Column {width="33.33%"}
+
+```{r}
+#| content: valuebox
+#| title: "Median finish time"
+list(
+  icon = "clock-history",
+  color = "info",
+  value = sprintf("%.2f h", med_hours)
+)
+```
+
+### Column {width="33.33%"}
+
+```{r}
+#| content: valuebox
+#| title: "With shoe + watch data"
+list(
+  icon = "bar-chart-fill",
+  color = "success",
+  value = paste(scales::comma(n_shoe), "shoe ·", scales::comma(n_watch), "watch")
+)
+```
+
+## Row {height=480px}
+
+### Column {width="55%"}
+
+```{r}
+#| title: "Halfway rank vs. finish rank"
+#| fig-height: 5.2
+#| fig-width: 7
+
+p_rank <- rank_plot_df |>
+  ggplot(aes(rank_first_half, rank_final, color = neg_split)) +
+  geom_point(alpha = 0.65, size = 2) +
+  xlim(0, 1250) + ylim(0, 1250) +
+  scale_color_manual(
+    values = c(`TRUE` = "#16a34a", `FALSE` = "#dc2626"),
+    labels = c("FALSE" = "Faded (worse finish rank)", "TRUE" = "Moved up")
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = "bold")
+  ) +
+  labs(
+    title = "Position at ~21 km vs. final order",
+    x = "Rank at half segment",
+    y = "Rank by finish time",
+    color = NULL
+  )
+
+ggplotly(p_rank, tooltip = c("rank_first_half", "rank_final")) |>
+  layout(legend = list(orientation = "h", y = -0.15))
+```
+
+### Column {width="45%"}
+
+```{r}
+#| title: "Finish time distribution"
+#| fig-height: 5.2
+#| fig-width: 5.5
+
+p_time <- cleaned_data |>
+  ggplot(aes(y = elapsed_time)) +
+  geom_boxplot(fill = "#3b82f6", alpha = 0.35, width = 0.35, outlier.alpha = 0.5) +
+  theme_minimal(base_size = 13) +
+  theme(panel.grid.minor = element_blank()) +
+  labs(title = "Elapsed time (h:mm:ss)", x = NULL, y = NULL)
+
+ggplotly(p_time)
+```
+
+::: {.card}
+A very fit subsample — median around **2h45**; BQ times are often ~3h30 depending on age/gender. A few runners started fast relative to their finish (red cloud upper-left).
+:::
+
+# Shoes
+
+## Row {height=420px}
+
+```{r}
+#| title: "Shoe brands (interactive)"
+#| fig-height: 5.5
+#| fig-width: 10
+
+shoe_cat <- cleaned_data |>
+  add_count(shoe_brand, name = "n") |>
+  drop_na(shoe_brand) |>
+  ggplot(aes(shoe_brand, fill = shoe_brand,
+             text = str_glue("{shoe_brand}, n = {n}"))) +
+  geom_bar() +
+  scale_fill_manual(values = brew_set1) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none", panel.grid.minor = element_blank()) +
+  labs(x = NULL, y = "Count", caption = "Brands with n ≤ 5 excluded.")
+
+ggplotly(shoe_cat, tooltip = "text") |>
+  layout(margin = list(b = 60))
+```
+
+## Row {height=460px}
+
+```{r}
+#| title: "Models within brand (broad categories from LLM-assisted cleanup)"
+#| fig-height: 5.8
+#| fig-width: 10
+
+shoe_model_plot <- clean_data_w_models |>
+  count(shoe_brand, shoe_model) |>
+  mutate(shoe_model = if_else(n > 4, shoe_model, "other")) |>
+  drop_na(shoe_brand, shoe_model) |>
+  group_by(shoe_brand, shoe_model) |>
+  summarize(n = sum(n), .groups = "drop") |>
+  ggplot(aes(shoe_brand, n, fill = shoe_model,
+             text = str_glue("{shoe_model}, n = {n}"))) +
+  geom_col() +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", panel.grid.minor = element_blank()) +
+  labs(x = NULL, y = "Count")
+
+ggplotly(shoe_model_plot, tooltip = "text") |>
+  layout(margin = list(b = 50))
+```
+
+## Row {height=280px}
+
+### Column {width="50%"}
+
+```{r}
+#| title: "Top shoe combinations (% of shoe sample)"
+knitr::kable(most_pop_models, format = "html", table.attr = "class='table table-sm'")
+```
+
+### Column {width="50%"}
+
+```{r}
+#| title: "Sample size"
+knitr::kable(
+  tibble(Metric = "Runners with shoe brand", Value = scales::comma(total_n)),
+  format = "html",
+  table.attr = "class='table table-sm'"
+)
+```
+
+# Watches
+
+## Row {height=440px}
+
+```{r}
+#| title: "Watch brand × model category (hover segments)"
+#| fig-height: 5.6
+#| fig-width: 10
+
+pal_watch <- c(
+  brew_set1,
+  RColorBrewer::brewer.pal(8, "Dark2"),
+  RColorBrewer::brewer.pal(8, "Set2")
+)
+
+watch_model_cat <- cleaned_data |>
+  add_count(watch_brand, watch_model_cat, name = "n") |>
+  drop_na(watch_brand) |>
+  ggplot(aes(watch_brand, fill = watch_model_cat,
+             text = str_glue("{watch_model_cat}, n = {n}"))) +
+  geom_bar() +
+  scale_fill_manual(values = pal_watch) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none", panel.grid.minor = element_blank()) +
+  labs(x = NULL, y = "Count", caption = "Brands with n ≤ 5 excluded.")
+
+ggplotly(watch_model_cat, tooltip = "text") |>
+  layout(margin = list(b = 60))
+```
+
+## Row {height=380px}
+
+### Column {width="45%"}
+
+```{r}
+#| title: "Garmin Forerunner — top model numbers"
+knitr::kable(forerunner_tab, format = "html", table.attr = "class='table table-sm'")
+```
+
+### Column {width="55%"}
+
+```{r}
+#| title: "Finish time by Forerunner series"
+#| fig-height: 4.5
+#| fig-width: 6
+
+p_fr <- cleaned_data |>
+  filter(watch_model_cat == "forerunner") |>
+  mutate(
+    forerunner = str_extract(watch_model, "[0-9]{2,3}"),
+    series = case_when(
+      str_length(forerunner) == 2 ~ str_c(0, forerunner),
+      TRUE ~ forerunner
+    ) |> str_replace("[0-9]{2}$", "xx")
+  ) |>
+  ggplot(aes(x = series, y = elapsed_time, fill = series)) +
+  geom_boxplot(alpha = 0.85, outlier.alpha = 0.4) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", panel.grid.minor = element_blank()) +
+  labs(x = "Forerunner series", y = "Elapsed time", title = NULL)
+
+ggplotly(p_fr)
+```
+
+# Times, effort & matching
+
+## Row {height=380px}
+
+### Column {width="50%"}
+
+```{r}
+#| title: "Finish time by shoe brand"
+#| fig-height: 4.5
+#| fig-width: 5.5
+
+p_es <- cleaned_data |>
+  drop_na(shoe_brand) |>
+  ggplot(aes(shoe_brand, elapsed_time, fill = shoe_brand)) +
+  geom_boxplot(alpha = 0.85, outlier.alpha = 0.35) +
+  scale_fill_manual(values = brew_set1) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 25, hjust = 1)) +
+  labs(x = NULL, y = NULL)
+
+ggplotly(p_es)
+```
+
+### Column {width="50%"}
+
+```{r}
+#| title: "Finish time by watch brand"
+#| fig-height: 4.5
+#| fig-width: 5.5
+
+p_ew <- cleaned_data |>
+  drop_na(watch_brand) |>
+  ggplot(aes(watch_brand, elapsed_time, fill = watch_brand)) +
+  geom_boxplot(alpha = 0.85, outlier.alpha = 0.35) +
+  scale_fill_manual(values = brew_set1) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 25, hjust = 1)) +
+  labs(x = NULL, y = NULL)
+
+ggplotly(p_ew)
+```
+
+## Row {height=380px}
+
+### Column {width="50%"}
+
+```{r}
+#| title: "Relative effort by shoe brand"
+#| fig-height: 4.5
+#| fig-width: 5.5
+
+p_rs <- cleaned_data |>
+  drop_na(shoe_brand) |>
+  ggplot(aes(shoe_brand, relative_effort, fill = shoe_brand)) +
+  geom_boxplot(alpha = 0.85, outlier.alpha = 0.35) +
+  scale_fill_manual(values = brew_set1) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 25, hjust = 1)) +
+  labs(x = NULL, y = "Strava relative effort")
+
+ggplotly(p_rs)
+```
+
+### Column {width="50%"}
+
+```{r}
+#| title: "Relative effort by watch brand"
+#| fig-height: 4.5
+#| fig-width: 5.5
+
+p_rw <- cleaned_data |>
+  drop_na(watch_brand) |>
+  ggplot(aes(watch_brand, relative_effort, fill = watch_brand)) +
+  geom_boxplot(alpha = 0.85, outlier.alpha = 0.35) +
+  scale_fill_manual(values = brew_set1) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 25, hjust = 1)) +
+  labs(x = NULL, y = NULL)
+
+ggplotly(p_rw)
+```
+
+## Row {height=420px}
+
+```{r}
+#| title: "Matched pairs: Nike vs. other brands (Garmin wearers, similar finish time)"
+#| fig-height: 5
+#| fig-width: 9
+
+if (match_plot_ok) {
+  mp <- matched_pairs |>
+    mutate(difference = re_1 - re_0)
+  m <- mean(mp$difference, na.rm = TRUE)
+  p_match <- mp |>
+    ggplot(aes(x = difference)) +
+    geom_histogram(bins = 28, fill = "#ea580c", alpha = 0.82, color = "white") +
+    geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.9, color = "#64748b") +
+    geom_vline(xintercept = m, linewidth = 1.1, color = "#b91c1c") +
+    theme_minimal(base_size = 13) +
+    theme(panel.grid.minor = element_blank()) +
+    labs(
+      title = "Paired difference in relative effort (Nike − other)",
+      subtitle = sprintf("Mean = %.2f | paired t-test (see console if knitted)", m),
+      x = "Δ Relative effort",
+      y = "Count"
+    )
+  print(ggplotly(p_match))
+} else {
+  plot.new()
+  text(0.5, 0.5, "Not enough matched pairs for this view.", cex = 1.2)
+}
+```
+
+::: {.card}
+**Matching setup:** `MatchIt` nearest-neighbor on elapsed time (±5 min caliper), Nike vs. Adidas/Asics/Saucony, Garmin-only to reduce HR-device heterogeneity. Original analysis: no significant paired difference in RE (large *p*).
+:::
+
+```{r}
+#| label: paired-ttest
+#| echo: false
+#| output: asis
+
+if (match_plot_ok && nrow(matched_pairs) >= 2) {
+  tt <- t.test(matched_pairs$re_1, matched_pairs$re_0, paired = TRUE)
+  cat(sprintf(
+    "**Paired t-test (Nike vs. other | matched):** *t* = %.2f, df = %.0f, *p* = %.3f, mean ΔRE = %.2f.",
+    unname(tt$statistic), unname(tt$parameter), tt$p.value, match_mean_diff
+  ))
+} else {
+  cat("_Paired t-test skipped (insufficient matched pairs)._")
+}
+```
+
+# Methods
+
+**Data harvest.** Segment 12666537 on Strava (~first half of the Boston course); Selenium for pagination and activity pages; random delays between requests. Per-activity scrape pulled overview stats, device block, and shoe block into `strava_results.csv`.
+
+**Cleaning.** R/tidyverse: parse inline stats, keep marathon distance on race day 2025-04-21. Watches reduced to brand + coarse model family; shoes parsed for brand, mileage cap at 1,000 km, brands with *n* ≤ 5 dropped. Shoe *models* use a precomputed LLM-assisted map in `boston_shoe_models.csv` (see project folder).
+
+**Matching.** `MatchIt` nearest neighbor on elapsed time (5-minute caliper), Nike vs. Adidas/Asics/Saucony among Garmin wearers.
+
+## Takeaways
+
+- **Garmin** dominates watches; **Forerunner** is the workhorse line. **Nike** leads shoe brand counts in this fast cohort.
+- **Relative Effort** is noisy (zones + subjective input + optical HR). Treat cross-brand RE comparisons as exploratory.
+- **Prospective work:** harmonize HR sensors (chest strap), larger N, cleaner shoe ontology — the dashboard structure makes it easy to drop in new CSVs and re-freeze.

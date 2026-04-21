@@ -9,7 +9,7 @@ You'll see a mix of techniques: classic machine learning, modern transformer mod
 
 ### What we can learn about runners from Strava
 
-I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there's no statistically significant evidence that shoe brand affects how hard you work during a marathon. [READ MORE](./projects/boston_marathon_data/boston_marathon_procrastination.qmd)
+I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there's no statistically significant evidence that shoe brand affects how hard you work during a marathon. [READ MORE](./projects/boston_marathon_data/boston_marathon_procrastination.qmd) · [DASHBOARD](./projects/boston_marathon_data/boston_marathon_dashboard.qmd)
 
 ### A local RAG assistant for teaching materials
 

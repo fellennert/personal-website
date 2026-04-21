@@ -1,0 +1,132 @@
+---
+title: "Five Niches, One Market: Mapping the Data Science Job Landscape"
+subtitle: "Executive Summary"
+author: "Felix Lennert"
+date: "2026-04-17"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  warning: false
+  message: false
+  freeze: true
+jupyter: selenium_env
+---
+
+## The problem
+
+"Data Scientist" is one of the most inflated job titles in tech. A quick scan of any job board reveals a sprawling zoo: *Applied Scientist*, *ML Scientist*, *Research Scientist*, *Product Data Scientist*, *Bioinformatics Scientist*, *Environmental Data Scientist*. The same label attaches to roles ranging from running wet-lab experiments to training transformer models to building dashboards for marketing.
+
+This raises two questions:
+
+1. **From the employer side**: Do the actual skill requirements reveal coherent role clusters beneath the noisy title landscape?
+2. **From the applicant side**: If those clusters exist, do job seekers perceive and act on them—or do they treat the whole market as undifferentiated?
+
+## The answer
+
+**Yes to question 1, no to question 2.**
+
+Employers have carved out **five distinct niches**, each with a clear skill vocabulary and minimal overlap. But job seekers don't navigate this taxonomy. Instead, they search in temporal waves, applying broadly across titles posted during their active window. The employer-defined specializations are invisible to applicants.
+
+---
+
+## Five skill-based clusters
+
+The analysis examined **3,421 job postings** from [Hiring Cafe](https://hiring.cafe), a structured job board. By normalizing skill names (e.g., "Python3", "Python (3.x)", "Python programming" → "Python") and clustering job titles by their skill profiles using TF-IDF weighting and graph-based community detection, five clusters emerge:
+
+```{=html}
+<div style="max-width: 100%; margin: 2rem 0;">
+```
+
+### Life Sciences Research
+- **Skill profile**: ELISA, flow cytometry, cell culture, PCR, BSL containment, Western blot, microscopy
+- **Role identity**: Experimental biology with statistical analysis and bioinformatics as supporting functions
+
+### Environmental & Clinical Science
+- **Skill profile**: GPS, GIS, ArcGIS, remote sensing, field equipment, regulatory software
+- **Role identity**: Data collection and analysis serving environmental compliance and clinical contexts
+
+### Computational Science
+- **Skill profile**: Bioinformatics, NGS, genomics, bash, Nextflow, Snakemake, HPC, Linux
+- **Role identity**: Scientific computing pipelines for genomics and molecular biology
+
+### Applied Data Science
+- **Skill profile**: Tableau, Power BI, Databricks, Airflow, dbt, dashboards, A/B testing, reporting
+- **Role identity**: Business-facing analytics and decision support via BI and dashboards
+
+### ML & AI Engineering
+- **Skill profile**: PyTorch, TensorFlow, Docker, Kubernetes, MLflow, SageMaker, GPU infrastructure
+- **Role identity**: Production ML systems; model training, deployment, monitoring at scale
+
+```{=html}
+</div>
+```
+
+These clusters are **robust**: bootstrap resampling shows 85%+ of titles consistently stay in their assigned clusters. The skill distinctiveness (log-odds ratios) confirms each cluster is defined by genuine domain vocabulary, not just shared generic tools like Python or SQL.
+
+---
+
+## The applicant mismatch
+
+Here's where the structure breaks down.
+
+When we examine who actually applies to each posting, the employer taxonomy vanishes. Instead, **applicants cluster by posting date**. A job seeker actively browsing in early January 2026 leaves their fingerprint across dozens of postings published that week — whether they're titled "Data Scientist, Fraud," "Data Scientist, Marketing," or "Senior Data Scientist."
+
+**Applicant overlap matrix** (simplified view):
+- *Within-cluster overlap*: ~80–90% (applicants to Applied DS also apply to other Applied DS titles)
+- *Cross-cluster overlap*: ~20–40% (applicants to ML roles frequently also apply to Applied DS roles)
+
+The same people competing for ML roles are also bidding for Applied DS and even Life Sciences roles, all within the same two-week search window. They're not specializing; they're searching.
+
+---
+
+## Cluster agreement breakdown
+
+For each job title, we can measure: **Does the applicant pool match the skill cluster assignment?**
+
+- **73%** of titles align: skills and applicants agree on cluster membership
+- **27%** show disagreement: skills predict one cluster, but applicants concentrate in another
+
+The misaligned titles are interesting cases — they may be ambiguous roles that serve multiple labor markets, or positions where applicants are "mispricing" their specialization against employer positioning.
+
+---
+
+## Key findings
+
+1. **Employers have solved the taxonomy problem.** Five coherent skill-based niches exist, and they're stable across resampling. Each cluster has a genuine domain vocabulary that distinguishes it.
+
+2. **Applicants see a different market.** From the applicant side, the structure is temporal, not functional. Job seekers do not perceive or act on the employer-defined niches.
+
+3. **This signals an information asymmetry.** Employers are recruiting for specialties; applicants are searching within time windows. Job seekers who could specialize (focus on one niche) are instead spreading their applications across the entire landscape during their active search window.
+
+4. **Not all titles align.** 27% of titles have applicant pools that diverge from their skill profile, suggesting either employer positioning that misses the market, or genuinely ambiguous roles.
+
+---
+
+## Methodology note
+
+This analysis required:
+
+- **Skill normalization**: Text preprocessing + sentence embeddings + HDBSCAN clustering + canonical labeling, not simple string matching (see [Article 1](ds_jobs_mapping_preprocessing.qmd))
+- **Skill weighting**: TF-IDF to downweight universal skills (Python, SQL) and upweight domain-specific vocabulary
+- **Robustness testing**: Bootstrap resampling to confirm clusters are stable, not sampling artifacts
+- **Applicant network analysis**: Cosine similarity and overlap matrices to map how people actually search
+
+For full technical details and code, see [Article 2](ds_jobs_mapping.qmd).
+
+---
+
+## What's in each article
+
+- **This article (0)**: Overview, key findings, intuition
+- **[Article 1: Preprocessing](ds_jobs_mapping_preprocessing.qmd)**: Data gathering, baseline method failures, the 4-stage normalization pipeline with comparisons
+- **[Article 2: Deep dives](ds_jobs_mapping.qmd)**: Full technical analysis — cluster stability, feature importance, applicant specialization, disagreement scoring, temporal dynamics, applicant journeys
+
+---
+
+## Takeaways
+
+The data science job market has **structural clarity from the employer side** but **temporal randomness from the applicant side**. If you're a job seeker, this suggests: don't assume the market's taxonomy matches your search behavior. Applicants in distinct skill niches are competing for the same time-window searches, likely bidding against each other for roles they're underqualified for. If you're hiring, it suggests: specialized roles may need better positioning to reach the right applicant pool, since generalist searches will surface your opening but won't preferentially surface the specialists you need.

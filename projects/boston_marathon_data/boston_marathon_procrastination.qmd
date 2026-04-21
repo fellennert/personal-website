@@ -21,6 +21,11 @@ Instead of writing about my actual research, I was wondering what kind of gear f
 
 The Strava API didn't prove to be very generous, so I built a little web scraper. I love web scraping, it's a bit like solving a little sudoku, and every website holds some new challenges.
 
+::: {.callout-tip}
+### Interactive dashboard
+This post is the long write-up (scraping, cleaning, matching). If you mainly want **tabbed charts, hoverable Plotly figures, and summary value boxes** on the same dataset, open the companion **[Boston Marathon dashboard](boston_marathon_dashboard.qmd)**.
+:::
+
 ## Step 1: Finding the Segment
 
 The first half of the Boston Marathon course exists as Segment 12666537 on Strava. I did not go for a longer segment, since some people might choose to end their activity early or so. I will, of course, also miss folks who don't start their watch *right at the start* or whose watches have GPS glitches. However, for 2025, around 6,000 segment times were recorded on this approximately 21km segment. 

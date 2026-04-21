@@ -158,7 +158,7 @@ ul.task-list li input[type="checkbox"] {
 <p>You’ll see a mix of techniques: classic machine learning, modern transformer models, web scraping, and interactive visualizations. The thread that runs through all of them is the same: turning raw data into understandable insights that people can actually use.</p>
 <section id="what-we-can-learn-about-runners-from-strava" class="level3">
 <h3 class="anchored" data-anchor-id="what-we-can-learn-about-runners-from-strava">What we can learn about runners from Strava</h3>
-<p>I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there’s no statistically significant evidence that shoe brand affects how hard you work during a marathon. <a href="./projects/boston_marathon_data/boston_marathon_procrastination.html">READ MORE</a></p>
+<p>I scraped 1,000+ Strava activities from the 2025 Boston Marathon to analyze what gear runners wear and whether it correlates with performance. Using Selenium to navigate dynamic webpages and wrestling with messy user-generated data, I dove into the world of running watches and shoes. Spoiler alert: Garmin dominates the watch market, Nike rules the shoe game among faster runners, and despite what the marketing says, there’s no statistically significant evidence that shoe brand affects how hard you work during a marathon. <a href="./projects/boston_marathon_data/boston_marathon_procrastination.html">READ MORE</a> · <a href="./projects/boston_marathon_data/boston_marathon_dashboard.html">DASHBOARD</a></p>
 </section>
 <section id="a-local-rag-assistant-for-teaching-materials" class="level3">
 <h3 class="anchored" data-anchor-id="a-local-rag-assistant-for-teaching-materials">A local RAG assistant for teaching materials</h3>
@@ -241,7 +241,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/felixlennert\.xyz");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -64,5 +64,20 @@
   },
   "work.qmd": {
     "work.html": "6e6dcf84"
+  },
+  "projects/ds_jobs_mapping/ds_jobs_mapping.qmd": {
+    "ds_jobs_mapping.html": "a21959c5"
+  },
+  "projects/ds_jobs_mapping/applicant_title_clustering.qmd": {
+    "applicant_title_clustering.html": "2a06e8ea"
+  },
+  "projects/boston_marathon_data/boston_marathon_dashboard.qmd": {
+    "boston_marathon_dashboard.html": "a5ba147f"
+  },
+  "projects/ds_jobs_mapping/ds_jobs_mapping_overview.qmd": {
+    "ds_jobs_mapping_overview.html": "643dfd73"
+  },
+  "projects/ds_jobs_mapping/ds_jobs_mapping_preprocessing.qmd": {
+    "ds_jobs_mapping_preprocessing.html": "438b5040"
   }
 }
