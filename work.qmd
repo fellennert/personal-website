@@ -3,7 +3,7 @@ title: "Selected Work"
 freeze: true
 ---
 
-The following case studies represent a sample of applied analytical work across consulting engagements, independent research, and industry projects. Each project applied rigorous quantitative methods to a concrete problem – from organizational strategy to market intelligence to NLP systems. Where applicable, detailed write-ups are linked below. Client-confidential engagements are described at the methodological level only.
+The following case studies represent a sample of applied analytical work across consulting engagements, independent research projects, and industry projects. Each project applied rigorous quantitative methods to a concrete problem – from organizational strategy to market intelligence to NLP systems. Where applicable, detailed write-ups are linked below. Client-confidential engagements are described at the methodological level only.
 
 ---
 
@@ -27,7 +27,7 @@ The following case studies represent a sample of applied analytical work across 
 
 **Result:** Documented market share patterns across watch and footwear brands among competitive runners. Found no statistically significant effect of shoe brand on race effort, providing evidence-based context for consumer brand claims.
 
-**Methods:** Web scraping (Selenium), data wrangling, statistical hypothesis testing, data visualization
+**Methods:** Web scraping (Selenium), data wrangling, statistical hypothesis testing, data visualization, Python, R
 
 [Read more →](./projects/boston_marathon_data/boston_marathon_procrastination.qmd) · [Interactive dashboard →](./projects/boston_marathon_data/boston_marathon_dashboard.qmd)
 
@@ -35,21 +35,21 @@ The following case studies represent a sample of applied analytical work across 
 
 ### Multilingual Survey Response Classification
 
-**Context:** A Scandinavian research institution required automated classification of open-ended survey responses collected across four languages to enable large-scale comparative analysis.
+**Context:** A Scandinavian research institution required automated classification of open-ended survey responses collected across six countries to enable large-scale comparative analysis. 
 
-**Approach:** Designed and implemented NLP classification pipelines using local LLMs and sBERT-based clustering. Validated automated outputs against expert-coded benchmarks using standard inter-rater reliability metrics.
+**Approach:** Recent advances in NLP have made it possible to classify survey responses at scale, but the quality of the classifications is still a subject of debate. Therefore, I implemented an NLP classification pipeline using local LLMs (to ensure reproducibility and privacy) and validated automated outputs against expert-coded benchmarks using standard inter-rater reliability metrics.  
 
-**Result:** Achieved human-level classification accuracy (F1: 0.91–0.98) across all four languages. Delivered reproducible analysis code and publication-ready visualizations. Co-authored two manuscripts currently under peer review.
+**Result:** Achieved human-level classification accuracy (F1: 0.91–0.98) across all six languages. This is a significant improvement over manual classification, which is time-consuming and error-prone.
 
-**Methods:** sBERT, LLM inference, multilingual NLP, F1 validation, Python, R
+**Methods:** LLM inference, multilingual NLP, F1 validation, Python, R
 
 ---
 
 ### RAG-Based Course Assistant for Higher Education
 
-**Context:** Students navigating large volumes of course materials – lecture notes, readings, notebooks – face a common challenge: finding relevant content quickly without re-reading everything. The same problem applies broadly across higher education, wherever instructors maintain substantial document repositories that students are expected to query and synthesize.
+**Context:** Students need to navigate large volumes of course materials – lecture notes, readings, notebooks. Furthermore, they need to apply the concepts learned in the course to their own research projects. Many students resort to commercial chatbots like ChatGPT, but these often hallucinate or provide answers that are not grounded in the course material. Building a local RAG system that is tailored to the course material and can be used by students to answer their questions is a solution to this problem.
 
-**Approach:** Designed and developed `teachrag`, an R package implementing a Retrieval-Augmented Generation (RAG) system that enables natural-language querying of course materials. The system converts documents to markdown, chunks them along headings, and indexes them in a DuckDB-backed vector store using local embeddings. A conversational RShiny interface allows students to ask questions and receive answers grounded strictly in course content, via either a local Ollama model or the Anthropic Claude API. The package ships with my own teaching materials pre-installed and supports custom document ingestion, making it readily adaptable by other instructors.
+**Approach:** Designed and developed `teachrag`, an R package implementing a Retrieval-Augmented Generation (RAG) system that enables natural-language querying of existing course materials. The system converts documents to markdown, chunks them along headings, and indexes them in a DuckDB-backed vector store using local embeddings. A conversational RShiny interface allows students to ask questions and receive answers grounded strictly in course content, via either a local Ollama model or the Anthropic Claude API. The package ships with my own teaching materials pre-installed and supports custom document ingestion, making it readily adaptable by other instructors.
 
 **Result:** Deployed for students in a graduate Computational Social Science course. Packaged and released as an open-source R package to make the approach reproducible and accessible to educators beyond my own courses.
 
@@ -73,28 +73,15 @@ The following case studies represent a sample of applied analytical work across 
 
 ---
 
-### Job Market Intelligence Analysis
-
-**Context:** What does the current demand landscape for quantitative and data science skills actually look like – at the level of specific methods, tools, and experience requirements?
-
-**Approach:** Analyzed 10,000+ data science and analytics job postings using NLP-based skill extraction to identify demand patterns by role type, industry, and geography. Applied Poisson regression to model skill co-occurrence and relative demand intensity.
-
-**Result:** Identified distinct skill clusters across role types, quantified relative demand for specific methodologies (causal inference, NLP, ML), and mapped salary distribution patterns across markets.
-
-**Methods:** NLP skill extraction, Poisson regression, text mining, data visualization
-
-*Full write-up forthcoming.*
-
----
-
 ### Five Niches, One Market: Mapping the Data Science Job Landscape
 
-**Context:** Job titles in data science are notoriously inconsistent. Does the underlying structure — coherent role clusters with distinct skill profiles — actually exist? And if it does, do job seekers perceive and act on it?
+**Context:** Job titles in data science are notoriously inconsistent. Does the underlying structure, i.e., coherent role clusters with distinct skill profiles, actually exist? And if it does, do job seekers perceive and act on it?
 
-**Approach:** Two complementary analyses. *Employer side:* Extract and normalize skill requirements from 3,400+ postings via embedding-based deduplication; build a TF-IDF weighted job × skill matrix; detect communities with Louvain (best of 30 seeds); visualize with UMAP. Log-odds ratios identify the skills that *distinguish* each cluster, not just the ones that happen to be common. *Applicant side:* Treat each posting as its own data point (no title grouping), build a posting × applicant matrix, and let UMAP + HDBSCAN reveal structure from applicant behavior alone.
+**Approach:** Two complementary analyses. *Employer side:* Extract and normalize skill requirements from 3,400+ postings via embedding-based deduplication; build a TF-IDF weighted job × skill matrix; detect communities with Louvain; visualize with UMAP. Log-odds ratios identify the skills that *distinguish* each cluster. *Applicant side:* Treat each posting as its own data point (no title grouping), build a posting × applicant matrix, and let UMAP + HDBSCAN reveal structure from applicant behavior alone.
 
 **Result:** Five distinct niches emerge from the skill data — Life Sciences Research, Environmental & Clinical Science, Computational Science, Applied Data Science, and ML & AI Engineering. But when you look at individual postings through applicant behavior, the clusters dissolve: the dominant axis is *when* the posting went live, not what role it described. Employers have carved out niches; job seekers treat the whole landscape as one undifferentiated market.
 
 **Methods:** NLP, TF-IDF, HDBSCAN, Louvain, UMAP, log-odds, Spearman ρ, Python
 
-[Read more →](./projects/ds_jobs_mapping/ds_jobs_mapping.qmd)
+*Full write-up forthcoming.*
+

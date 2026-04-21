@@ -14,7 +14,7 @@ toc: false
 
 I am a computational social scientist based in Boston, MA, with expertise in quantitative methods, causal inference, and applied NLP. I hold a Ph.D. from ENSAE, Institut Polytechnique de Paris (2026) and specialize in translating complex analytical findings into clear, actionable insights for decision-makers. My work spans consumer behavior, market analysis, political attitudes, and organizational performance – combining the methodological rigor of academic research with the practical orientation of applied consulting.
 
-I am currently seeking roles in economic consulting, analytics, and data science where quantitative depth and communication clarity are equally valued.
+I am currently seeking roles in economic consulting, analytics, and data science where quantitative depth, original research, and communication clarity are equally valued.
 
 :::
 :::
@@ -65,13 +65,12 @@ Building interactive dashboards, reproducible analysis pipelines, and stakeholde
 
 ## Recent Work
 
-- Completed doctoral research on ideological, affective, and lifestyle polarization across France, Germany, and Sweden using large-scale computational methods – resulting in five peer-reviewed manuscripts currently under review.
-- Providing freelance analytical consulting to domestic and international clients in education, survey research, and industry – including NLP pipeline development, performance analytics, and LLM-based classification systems.
+- Completed doctoral research on ideological, affective, and lifestyle polarization across France, Germany, and Sweden using large-scale computational methods.
+- Providing freelance analytical consulting to domestic and international clients in education, research, and industry – including NLP pipeline development, performance analytics, and LLM-based classification systems.
+- Teaching data science methods to Sociology students at senior and master level. Mentoring Bachelor's and Master's students during their final theses.
 
 ---
 
 ## Contact
-
-Based in Boston, MA · U.S. Permanent Resident · German Citizen
 
 [felix@felixlennert.xyz](mailto:felix@felixlennert.xyz) · [LinkedIn](https://www.linkedin.com/in/felix-lennert/) · [GitHub](https://github.com/fellennert)
