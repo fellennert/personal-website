@@ -132,7 +132,6 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#multilingual-survey-response-classification" id="toc-multilingual-survey-response-classification" class="nav-link" data-scroll-target="#multilingual-survey-response-classification">Multilingual Survey Response Classification</a></li>
   <li><a href="#rag-based-course-assistant-for-higher-education" id="toc-rag-based-course-assistant-for-higher-education" class="nav-link" data-scroll-target="#rag-based-course-assistant-for-higher-education">RAG-Based Course Assistant for Higher Education</a></li>
   <li><a href="#industrial-sector-classification-certification-verification" id="toc-industrial-sector-classification-certification-verification" class="nav-link" data-scroll-target="#industrial-sector-classification-certification-verification">Industrial Sector Classification &amp; Certification Verification</a></li>
-  <li><a href="#job-market-intelligence-analysis" id="toc-job-market-intelligence-analysis" class="nav-link" data-scroll-target="#job-market-intelligence-analysis">Job Market Intelligence Analysis</a></li>
   <li><a href="#five-niches-one-market-mapping-the-data-science-job-landscape" id="toc-five-niches-one-market-mapping-the-data-science-job-landscape" class="nav-link" data-scroll-target="#five-niches-one-market-mapping-the-data-science-job-landscape">Five Niches, One Market: Mapping the Data Science Job Landscape</a></li>
   </ul>
 </nav>
@@ -159,7 +158,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>The following case studies represent a sample of applied analytical work across consulting engagements, independent research, and industry projects. Each project applied rigorous quantitative methods to a concrete problem – from organizational strategy to market intelligence to NLP systems. Where applicable, detailed write-ups are linked below. Client-confidential engagements are described at the methodological level only.</p>
+<p>The following case studies represent a sample of applied analytical work across consulting engagements, independent research projects, and industry projects. Each project applied rigorous quantitative methods to a concrete problem – from organizational strategy to market intelligence to NLP systems. Where applicable, detailed write-ups are linked below. Client-confidential engagements are described at the methodological level only.</p>
 <hr>
 <section id="organizational-performance-growth-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="organizational-performance-growth-strategy">Organizational Performance &amp; Growth Strategy</h3>
@@ -174,22 +173,22 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Context:</strong> What can large-scale behavioral data from competitive athletes reveal about brand market share and the relationship between equipment choice and performance?</p>
 <p><strong>Approach:</strong> Collected 1,000+ race activity records via web scraping, linked equipment metadata to performance outcomes, and applied statistical testing to evaluate whether observed brand–performance associations exceeded chance variation.</p>
 <p><strong>Result:</strong> Documented market share patterns across watch and footwear brands among competitive runners. Found no statistically significant effect of shoe brand on race effort, providing evidence-based context for consumer brand claims.</p>
-<p><strong>Methods:</strong> Web scraping (Selenium), data wrangling, statistical hypothesis testing, data visualization</p>
+<p><strong>Methods:</strong> Web scraping (Selenium), data wrangling, statistical hypothesis testing, data visualization, Python, R</p>
 <p><a href="./projects/boston_marathon_data/boston_marathon_procrastination.html">Read more →</a> · <a href="./projects/boston_marathon_data/boston_marathon_dashboard.html">Interactive dashboard →</a></p>
 <hr>
 </section>
 <section id="multilingual-survey-response-classification" class="level3">
 <h3 class="anchored" data-anchor-id="multilingual-survey-response-classification">Multilingual Survey Response Classification</h3>
-<p><strong>Context:</strong> A Scandinavian research institution required automated classification of open-ended survey responses collected across four languages to enable large-scale comparative analysis.</p>
-<p><strong>Approach:</strong> Designed and implemented NLP classification pipelines using local LLMs and sBERT-based clustering. Validated automated outputs against expert-coded benchmarks using standard inter-rater reliability metrics.</p>
-<p><strong>Result:</strong> Achieved human-level classification accuracy (F1: 0.91–0.98) across all four languages. Delivered reproducible analysis code and publication-ready visualizations. Co-authored two manuscripts currently under peer review.</p>
-<p><strong>Methods:</strong> sBERT, LLM inference, multilingual NLP, F1 validation, Python, R</p>
+<p><strong>Context:</strong> A Scandinavian research institution required automated classification of open-ended survey responses collected across six countries to enable large-scale comparative analysis.</p>
+<p><strong>Approach:</strong> Recent advances in NLP have made it possible to classify survey responses at scale, but the quality of the classifications is still a subject of debate. Therefore, I implemented an NLP classification pipeline using local LLMs (to ensure reproducibility and privacy) and validated automated outputs against expert-coded benchmarks using standard inter-rater reliability metrics.</p>
+<p><strong>Result:</strong> Achieved human-level classification accuracy (F1: 0.91–0.98) across all six languages. This is a significant improvement over manual classification, which is time-consuming and error-prone.</p>
+<p><strong>Methods:</strong> LLM inference, multilingual NLP, F1 validation, Python, R</p>
 <hr>
 </section>
 <section id="rag-based-course-assistant-for-higher-education" class="level3">
 <h3 class="anchored" data-anchor-id="rag-based-course-assistant-for-higher-education">RAG-Based Course Assistant for Higher Education</h3>
-<p><strong>Context:</strong> Students navigating large volumes of course materials – lecture notes, readings, notebooks – face a common challenge: finding relevant content quickly without re-reading everything. The same problem applies broadly across higher education, wherever instructors maintain substantial document repositories that students are expected to query and synthesize.</p>
-<p><strong>Approach:</strong> Designed and developed <code>teachrag</code>, an R package implementing a Retrieval-Augmented Generation (RAG) system that enables natural-language querying of course materials. The system converts documents to markdown, chunks them along headings, and indexes them in a DuckDB-backed vector store using local embeddings. A conversational RShiny interface allows students to ask questions and receive answers grounded strictly in course content, via either a local Ollama model or the Anthropic Claude API. The package ships with my own teaching materials pre-installed and supports custom document ingestion, making it readily adaptable by other instructors.</p>
+<p><strong>Context:</strong> Students need to navigate large volumes of course materials – lecture notes, readings, notebooks. Furthermore, they need to apply the concepts learned in the course to their own research projects. Many students resort to commercial chatbots like ChatGPT, but these often hallucinate or provide answers that are not grounded in the course material. Building a local RAG system that is tailored to the course material and can be used by students to answer their questions is a solution to this problem.</p>
+<p><strong>Approach:</strong> Designed and developed <code>teachrag</code>, an R package implementing a Retrieval-Augmented Generation (RAG) system that enables natural-language querying of existing course materials. The system converts documents to markdown, chunks them along headings, and indexes them in a DuckDB-backed vector store using local embeddings. A conversational RShiny interface allows students to ask questions and receive answers grounded strictly in course content, via either a local Ollama model or the Anthropic Claude API. The package ships with my own teaching materials pre-installed and supports custom document ingestion, making it readily adaptable by other instructors.</p>
 <p><strong>Result:</strong> Deployed for students in a graduate Computational Social Science course. Packaged and released as an open-source R package to make the approach reproducible and accessible to educators beyond my own courses.</p>
 <p><strong>Methods:</strong> RAG architecture, vector search, local LLM inference, RShiny, R package development</p>
 <p><a href="./projects/teaching_rag/teachrag.html">Read more →</a></p>
@@ -204,22 +203,13 @@ ul.task-list li input[type="checkbox"] {
 <p><a href="https://github.com/fellennert/perplexicaR">GitHub: perplexicaR →</a> · <em>Client details otherwise confidential.</em></p>
 <hr>
 </section>
-<section id="job-market-intelligence-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="job-market-intelligence-analysis">Job Market Intelligence Analysis</h3>
-<p><strong>Context:</strong> What does the current demand landscape for quantitative and data science skills actually look like – at the level of specific methods, tools, and experience requirements?</p>
-<p><strong>Approach:</strong> Analyzed 10,000+ data science and analytics job postings using NLP-based skill extraction to identify demand patterns by role type, industry, and geography. Applied Poisson regression to model skill co-occurrence and relative demand intensity.</p>
-<p><strong>Result:</strong> Identified distinct skill clusters across role types, quantified relative demand for specific methodologies (causal inference, NLP, ML), and mapped salary distribution patterns across markets.</p>
-<p><strong>Methods:</strong> NLP skill extraction, Poisson regression, text mining, data visualization</p>
-<p><em>Full write-up forthcoming.</em></p>
-<hr>
-</section>
 <section id="five-niches-one-market-mapping-the-data-science-job-landscape" class="level3">
 <h3 class="anchored" data-anchor-id="five-niches-one-market-mapping-the-data-science-job-landscape">Five Niches, One Market: Mapping the Data Science Job Landscape</h3>
-<p><strong>Context:</strong> Job titles in data science are notoriously inconsistent. Does the underlying structure — coherent role clusters with distinct skill profiles — actually exist? And if it does, do job seekers perceive and act on it?</p>
-<p><strong>Approach:</strong> Two complementary analyses. <em>Employer side:</em> Extract and normalize skill requirements from 3,400+ postings via embedding-based deduplication; build a TF-IDF weighted job × skill matrix; detect communities with Louvain (best of 30 seeds); visualize with UMAP. Log-odds ratios identify the skills that <em>distinguish</em> each cluster, not just the ones that happen to be common. <em>Applicant side:</em> Treat each posting as its own data point (no title grouping), build a posting × applicant matrix, and let UMAP + HDBSCAN reveal structure from applicant behavior alone.</p>
+<p><strong>Context:</strong> Job titles in data science are notoriously inconsistent. Does the underlying structure, i.e., coherent role clusters with distinct skill profiles, actually exist? And if it does, do job seekers perceive and act on it?</p>
+<p><strong>Approach:</strong> Two complementary analyses. <em>Employer side:</em> Extract and normalize skill requirements from 3,400+ postings via embedding-based deduplication; build a TF-IDF weighted job × skill matrix; detect communities with Louvain; visualize with UMAP. Log-odds ratios identify the skills that <em>distinguish</em> each cluster. <em>Applicant side:</em> Treat each posting as its own data point (no title grouping), build a posting × applicant matrix, and let UMAP + HDBSCAN reveal structure from applicant behavior alone.</p>
 <p><strong>Result:</strong> Five distinct niches emerge from the skill data — Life Sciences Research, Environmental &amp; Clinical Science, Computational Science, Applied Data Science, and ML &amp; AI Engineering. But when you look at individual postings through applicant behavior, the clusters dissolve: the dominant axis is <em>when</em> the posting went live, not what role it described. Employers have carved out niches; job seekers treat the whole landscape as one undifferentiated market.</p>
 <p><strong>Methods:</strong> NLP, TF-IDF, HDBSCAN, Louvain, UMAP, log-odds, Spearman ρ, Python</p>
-<p><a href="./projects/ds_jobs_mapping/ds_jobs_mapping.html">Read more →</a></p>
+<p><em>Full write-up forthcoming.</em></p>
 
 
 </section>

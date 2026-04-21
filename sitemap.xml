@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://felixlennert.xyz/work.html</loc>
-    <lastmod>2026-04-21T15:32:12.614Z</lastmod>
+    <lastmod>2026-04-21T15:56:52.146Z</lastmod>
   </url>
   <url>
     <loc>https://felixlennert.xyz/research_articles/mobility.html</loc>
@@ -14,43 +14,31 @@
   </url>
   <url>
     <loc>https://felixlennert.xyz/research.html</loc>
-    <lastmod>2026-04-21T15:52:32.650Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/projects/ds_jobs_mapping/ds_jobs_mapping_preprocessing.html</loc>
-    <lastmod>2026-04-17T14:38:46.694Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/projects/ds_jobs_mapping/ds_jobs_mapping.html</loc>
-    <lastmod>2026-04-21T15:32:12.608Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/projects/boston_marathon_data/boston_marathon_dashboard.html</loc>
-    <lastmod>2026-04-21T15:32:12.597Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/index.html</loc>
-    <lastmod>2026-03-16T13:18:33.205Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/about.html</loc>
-    <lastmod>2026-03-16T13:35:08.879Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/cv.html</loc>
-    <lastmod>2026-03-16T13:04:58.231Z</lastmod>
-  </url>
-  <url>
-    <loc>https://felixlennert.xyz/projects.html</loc>
-    <lastmod>2026-04-21T15:32:12.597Z</lastmod>
+    <lastmod>2026-04-21T15:56:53.538Z</lastmod>
   </url>
   <url>
     <loc>https://felixlennert.xyz/projects/boston_marathon_data/boston_marathon_procrastination.html</loc>
     <lastmod>2026-04-21T15:32:12.597Z</lastmod>
   </url>
   <url>
-    <loc>https://felixlennert.xyz/projects/ds_jobs_mapping/ds_jobs_mapping_overview.html</loc>
-    <lastmod>2026-04-17T14:33:39.553Z</lastmod>
+    <loc>https://felixlennert.xyz/projects.html</loc>
+    <lastmod>2026-04-21T15:32:12.597Z</lastmod>
+  </url>
+  <url>
+    <loc>https://felixlennert.xyz/cv.html</loc>
+    <lastmod>2026-03-16T13:04:58.231Z</lastmod>
+  </url>
+  <url>
+    <loc>https://felixlennert.xyz/about.html</loc>
+    <lastmod>2026-03-16T13:35:08.879Z</lastmod>
+  </url>
+  <url>
+    <loc>https://felixlennert.xyz/index.html</loc>
+    <lastmod>2026-04-21T15:56:46.418Z</lastmod>
+  </url>
+  <url>
+    <loc>https://felixlennert.xyz/projects/boston_marathon_data/boston_marathon_dashboard.html</loc>
+    <lastmod>2026-04-21T15:32:12.597Z</lastmod>
   </url>
   <url>
     <loc>https://felixlennert.xyz/projects/teaching_rag/teachrag.html</loc>
