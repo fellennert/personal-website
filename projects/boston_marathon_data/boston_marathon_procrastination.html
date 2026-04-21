@@ -205,11 +205,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>You know you’ve reached peak Ph.D.&nbsp;thesis avoidance when you decide that scraping 1000+ Strava activities from the Boston Marathon seems like a <em>totally reasonable</em> use of your time. But here we are.</p>
 <p>Instead of writing about my actual research, I was wondering what kind of gear folks wear at the Boston Marathon and whether you could see some correlations with their Relative Exertion and finishing times.</p>
 <p>The Strava API didn’t prove to be very generous, so I built a little web scraper. I love web scraping, it’s a bit like solving a little sudoku, and every website holds some new challenges.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Interactive dashboard
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This post is the long write-up (scraping, cleaning, matching). If you mainly want <strong>tabbed charts, hoverable Plotly figures, and summary value boxes</strong> on the same dataset, open the companion <strong><a href="../../projects/boston_marathon_data/boston_marathon_dashboard.html">Boston Marathon dashboard</a></strong>.</p>
+</div>
+</div>
 <section id="step-1-finding-the-segment" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-finding-the-segment">Step 1: Finding the Segment</h2>
 <p>The first half of the Boston Marathon course exists as Segment 12666537 on Strava. I did not go for a longer segment, since some people might choose to end their activity early or so. I will, of course, also miss folks who don’t start their watch <em>right at the start</em> or whose watches have GPS glitches. However, for 2025, around 6,000 segment times were recorded on this approximately 21km segment.</p>
 <p>Seeing full Strava segment lists requires you to be a summit user, so I had to log into my account. Also, it’s a dynamic website. So, I ended up using selenium for data acquisition.</p>
-<div id="5e0f6e8c" class="cell" data-execution_count="1">
+<div id="767ec1dd" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
@@ -231,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-2-collecting-activity-urls" class="level2">
 <h2 class="anchored" data-anchor-id="step-2-collecting-activity-urls">Step 2: Collecting Activity URLs</h2>
 <p>First, I needed to gather all the activity URLs. The segment leaderboard is paginated, so I wrote a loop to click through pages and collect links. I added random delays because I’m not a monster and the website had some latency (the latter could have also been achieved – and made more robust – by asking selenium to wait until the website was done building).</p>
-<div id="f788edcc" class="cell" data-execution_count="2">
+<div id="71eeba4d" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>activity_urls <span class="op">=</span> []</span>
@@ -264,7 +277,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Not get blocked by Strava (hence the generous random delays)</li>
 </ol>
 <p>My first attempt had some retry logic for when elements didn’t load properly (the site proved to be fairly sketchy and unstable):</p>
-<div id="d20a3663" class="cell" data-execution_count="3">
+<div id="d1daa6f4" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> url <span class="kw">in</span> current_urls:</span>
@@ -296,7 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>Eventually, I refined my approach to directly construct the overview URL using a RegEx which stabilized things. I hit a couple of runtime errors, so in the end I stopped my collection after getting the ~1000 runners who had finished the first half Strava segment fastest:</p>
-<div id="ffa4be95" class="cell" data-execution_count="4">
+<div id="3851f276" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> url <span class="kw">in</span> current_urls:</span>

@@ -133,6 +133,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#rag-based-course-assistant-for-higher-education" id="toc-rag-based-course-assistant-for-higher-education" class="nav-link" data-scroll-target="#rag-based-course-assistant-for-higher-education">RAG-Based Course Assistant for Higher Education</a></li>
   <li><a href="#industrial-sector-classification-certification-verification" id="toc-industrial-sector-classification-certification-verification" class="nav-link" data-scroll-target="#industrial-sector-classification-certification-verification">Industrial Sector Classification &amp; Certification Verification</a></li>
   <li><a href="#job-market-intelligence-analysis" id="toc-job-market-intelligence-analysis" class="nav-link" data-scroll-target="#job-market-intelligence-analysis">Job Market Intelligence Analysis</a></li>
+  <li><a href="#five-niches-one-market-mapping-the-data-science-job-landscape" id="toc-five-niches-one-market-mapping-the-data-science-job-landscape" class="nav-link" data-scroll-target="#five-niches-one-market-mapping-the-data-science-job-landscape">Five Niches, One Market: Mapping the Data Science Job Landscape</a></li>
   </ul>
 </nav>
     </div>
@@ -174,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Approach:</strong> Collected 1,000+ race activity records via web scraping, linked equipment metadata to performance outcomes, and applied statistical testing to evaluate whether observed brand–performance associations exceeded chance variation.</p>
 <p><strong>Result:</strong> Documented market share patterns across watch and footwear brands among competitive runners. Found no statistically significant effect of shoe brand on race effort, providing evidence-based context for consumer brand claims.</p>
 <p><strong>Methods:</strong> Web scraping (Selenium), data wrangling, statistical hypothesis testing, data visualization</p>
-<p><a href="./projects/boston_marathon_data/boston_marathon_procrastination.html">Read more →</a></p>
+<p><a href="./projects/boston_marathon_data/boston_marathon_procrastination.html">Read more →</a> · <a href="./projects/boston_marathon_data/boston_marathon_dashboard.html">Interactive dashboard →</a></p>
 <hr>
 </section>
 <section id="multilingual-survey-response-classification" class="level3">
@@ -210,6 +211,15 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Result:</strong> Identified distinct skill clusters across role types, quantified relative demand for specific methodologies (causal inference, NLP, ML), and mapped salary distribution patterns across markets.</p>
 <p><strong>Methods:</strong> NLP skill extraction, Poisson regression, text mining, data visualization</p>
 <p><em>Full write-up forthcoming.</em></p>
+<hr>
+</section>
+<section id="five-niches-one-market-mapping-the-data-science-job-landscape" class="level3">
+<h3 class="anchored" data-anchor-id="five-niches-one-market-mapping-the-data-science-job-landscape">Five Niches, One Market: Mapping the Data Science Job Landscape</h3>
+<p><strong>Context:</strong> Job titles in data science are notoriously inconsistent. Does the underlying structure — coherent role clusters with distinct skill profiles — actually exist? And if it does, do job seekers perceive and act on it?</p>
+<p><strong>Approach:</strong> Two complementary analyses. <em>Employer side:</em> Extract and normalize skill requirements from 3,400+ postings via embedding-based deduplication; build a TF-IDF weighted job × skill matrix; detect communities with Louvain (best of 30 seeds); visualize with UMAP. Log-odds ratios identify the skills that <em>distinguish</em> each cluster, not just the ones that happen to be common. <em>Applicant side:</em> Treat each posting as its own data point (no title grouping), build a posting × applicant matrix, and let UMAP + HDBSCAN reveal structure from applicant behavior alone.</p>
+<p><strong>Result:</strong> Five distinct niches emerge from the skill data — Life Sciences Research, Environmental &amp; Clinical Science, Computational Science, Applied Data Science, and ML &amp; AI Engineering. But when you look at individual postings through applicant behavior, the clusters dissolve: the dominant axis is <em>when</em> the posting went live, not what role it described. Employers have carved out niches; job seekers treat the whole landscape as one undifferentiated market.</p>
+<p><strong>Methods:</strong> NLP, TF-IDF, HDBSCAN, Louvain, UMAP, log-odds, Spearman ρ, Python</p>
+<p><a href="./projects/ds_jobs_mapping/ds_jobs_mapping.html">Read more →</a></p>
 
 
 </section>
